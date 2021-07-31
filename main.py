@@ -53,7 +53,6 @@ class Maze_creator:
 
         return self.list_of_blocks
 
-
     def draw(self, display_surf, image_surf):
         index_x = 0
         index_y = 0
@@ -150,6 +149,7 @@ class App:
         self.on_cleanup()
 
 
+        
 if __name__ == "__main__":
     theApp = App()
     theApp.on_execute()

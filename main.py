@@ -4,8 +4,8 @@ from sys import exit
 
 
 class Player:
-    x = 70 # x start location
-    y = 64 # y start location
+    x = 70  # x start location
+    y = 64  # y start location
     speed_of_movement = 0.2
 
     def Move_right(self):

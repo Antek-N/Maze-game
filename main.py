@@ -34,7 +34,10 @@ class MazeCreator:
 
         for i in range(0, self.width * self.height):
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
-                self.list_of_blocks.append((self.index_x * 50 - 10, (self.index_x + 1) * 50, self.index_y * 50 - 10, (self.index_y + 1) * 50))
+                self.list_of_blocks.append((self.index_x * 50 - 10,
+                                           (self.index_x + 1) * 50,
+                                            self.index_y * 50 - 10,
+                                           (self.index_y + 1) * 50))
 
             self.index_x += 1
             if self.index_x > self.width - 1:

@@ -8,39 +8,29 @@ class Player:
     y = 64  # y start location
     speed_of_movement = 0.2
 
-    def Move_right(self):
+    def move_right(self):
         self.x += self.speed_of_movement
 
-    def Move_left(self):
+    def move_left(self):
         self.x -= self.speed_of_movement
 
-    def Move_up(self):
+    def move_up(self):
         self.y -= self.speed_of_movement
 
-    def Move_down(self):
+    def move_down(self):
         self.y += self.speed_of_movement
 
 
-class Maze_creator:
-    def __init__(self):
+class MazeCreator:
+    def __init__(self, maze):
         self.width = 10
         self.height = 10
-        self.maze = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                     1, 0, 1, 0, 1, 0, 1, 0, 1, 1,
-                     1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                     1, 0, 1, 1, 0, 1, 1, 1, 0, 1,
-                     1, 0, 1, 0, 0, 0, 0, 1, 0, 1,
-                     1, 1, 1, 0, 1, 0, 1, 1, 0, 1,
-                     1, 0, 0, 0, 1, 1, 1, 0, 1, 1,
-                     1, 0, 1, 1, 1, 0, 0, 0, 0, 1,
-                     1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-                     1, 1, 1, 1, 1, 1, 1, 1, 0, 1]
-
-    def colisions(self):
-
+        self.maze = maze
         self.index_y = 0
         self.index_x = 0
         self.list_of_blocks = []
+
+    def colisions(self):
 
         for i in range(0, self.width * self.height):
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
@@ -79,7 +69,16 @@ class App:
         self._image_surf = None
         self._block_surf = None
         self.player = Player()
-        self.maze = Maze_creator()
+        self.maze = MazeCreator(maze=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                      1, 0, 1, 0, 1, 0, 1, 0, 1, 1,
+                                      1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                                      1, 0, 1, 1, 0, 1, 1, 1, 0, 1,
+                                      1, 0, 1, 0, 0, 0, 0, 1, 0, 1,
+                                      1, 1, 1, 0, 1, 0, 1, 1, 0, 1,
+                                      1, 0, 0, 0, 1, 1, 1, 0, 1, 1,
+                                      1, 0, 1, 1, 1, 0, 0, 0, 0, 1,
+                                      1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+                                      1, 1, 1, 1, 1, 1, 1, 1, 0, 1])
 
     def on_init(self):
         pygame.init()
@@ -107,19 +106,19 @@ class App:
         pygame.quit()
 
     def on_execute(self):
-        if self.on_init() == False:
+        if self.on_init() is False:
             self._running = False
 
         end = False
         colision_list = self.maze.colisions()
-        while (self._running):
+        while self._running:
 
             for i in colision_list:
-                if (i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]):
+                if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
                     end = True
                     print("you lose!")
 
-            if (end == True):
+            if end is True:
                 break
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -129,27 +128,27 @@ class App:
             pygame.event.pump()
             keys = pygame.key.get_pressed()
 
-            if (keys[K_RIGHT]):
-                self.player.Move_right()
+            if keys[K_RIGHT]:
+                self.player.move_right()
 
-            if (keys[K_LEFT]):
-                self.player.Move_left()
+            if keys[K_LEFT]:
+                self.player.move_left()
 
-            if (keys[K_UP]):
-                self.player.Move_up()
+            if keys[K_UP]:
+                self.player.move_up()
 
-            if (keys[K_DOWN]):
-                self.player.Move_down()
+            if keys[K_DOWN]:
+                self.player.move_down()
 
-            if (keys[K_ESCAPE]):
+            if keys[K_ESCAPE]:
                 self._running = False
 
             self.on_loop()
             self.on_render()
+
         self.on_cleanup()
 
 
-        
 if __name__ == "__main__":
     theApp = App()
     theApp.on_execute()

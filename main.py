@@ -99,6 +99,7 @@ class App:
         self.maze.draw(self._display_surf, self._block_surf)
         pygame.display.flip()
 
+    # Main part
     def on_execute(self):
         self.on_init()
         end = False
@@ -143,6 +144,7 @@ class App:
                 pygame.quit()
                 exit()
 
+            # Render display and maze
             self.on_render()
 
 

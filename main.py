@@ -23,9 +23,9 @@ class Player:
 
 
 class MazeCreator:
-    def __init__(self, maze):
-        self.width = 10
-        self.height = 10
+    def __init__(self, width, height, maze):
+        self.width = width
+        self.height = height
         self.maze = maze
         self.index_y = 0
         self.index_x = 0
@@ -74,16 +74,20 @@ class App:
         self._image_surf = None
         self._block_surf = None
         self.player = Player()
-        self.maze = MazeCreator(maze=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                      1, 0, 1, 0, 1, 0, 1, 0, 1, 1,
-                                      1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                                      1, 0, 1, 1, 0, 1, 1, 1, 0, 1,
-                                      1, 0, 1, 0, 0, 0, 0, 1, 0, 1,
-                                      1, 1, 1, 0, 1, 0, 1, 1, 0, 1,
-                                      1, 0, 0, 0, 1, 1, 1, 0, 1, 1,
-                                      1, 0, 1, 1, 1, 0, 0, 0, 0, 1,
-                                      1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-                                      1, 1, 1, 1, 1, 1, 1, 1, 0, 1])
+        maze_width = 16
+        maze_height = 12
+        self.maze = MazeCreator(maze_width, maze_height, maze=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                                               1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+                                                               1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1,
+                                                               1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                                                               1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+                                                               1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+                                                               1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
+                                                               1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+                                                               1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+                                                               1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
+                                                               1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+                                                               1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
 
     def on_init(self):
         pygame.init()

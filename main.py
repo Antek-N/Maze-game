@@ -124,10 +124,10 @@ class App:
                     pygame.quit()
                     exit()
 
+            # Handling control
             pygame.event.pump()
             keys = pygame.key.get_pressed()
 
-            # Handling control
             if keys[K_RIGHT]:
                 self.player.move_right()
 

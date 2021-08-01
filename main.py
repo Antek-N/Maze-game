@@ -8,6 +8,7 @@ class Player:
     y = 64  # y start location
     speed_of_movement = 0.2
 
+    # Control settings
     def move_right(self):
         self.x += self.speed_of_movement
 
@@ -30,7 +31,8 @@ class MazeCreator:
         self.index_x = 0
         self.list_of_blocks = []
 
-    def colisions(self):
+    # Handle collisions
+    def collisions(self):
 
         for i in range(0, self.width * self.height):
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
@@ -46,6 +48,7 @@ class MazeCreator:
 
         return self.list_of_blocks
 
+    # Drawing maze
     def draw(self, display_surf, image_surf):
         index_x = 0
         index_y = 0
@@ -67,7 +70,6 @@ class App:
     player = 0
 
     def __init__(self):
-        self._running = True
         self._display_surf = None
         self._image_surf = None
         self._block_surf = None
@@ -85,19 +87,11 @@ class App:
 
     def on_init(self):
         pygame.init()
-        self._display_surf = pygame.display.set_mode((self.window_width, self.window_height), pygame.HWSURFACE)
+        self._display_surf = pygame.display.set_mode((self.window_width, self.window_height))
 
         pygame.display.set_caption('DotGame')
-        self._running = True
         self._image_surf = pygame.image.load("player.png").convert()
         self._block_surf = pygame.image.load("block.jpeg").convert()
-
-    def on_event(self, event):
-        if event.type == QUIT:
-            self._running = False
-
-    def on_loop(self):
-        pass
 
     def on_render(self):
         self._display_surf.fill((0, 0, 0))
@@ -105,24 +99,25 @@ class App:
         self.maze.draw(self._display_surf, self._block_surf)
         pygame.display.flip()
 
-    def on_cleanup(self):
-        pygame.quit()
-
     def on_execute(self):
-        if self.on_init() is False:
-            self._running = False
-
+        self.on_init()
         end = False
-        colision_list = self.maze.colisions()
-        while self._running:
+        collision_list = self.maze.collisions()
 
-            for i in colision_list:
+        while True:
+
+            # HANDLE EVENTS
+
+            # Handling collision
+            for i in collision_list:
                 if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
                     end = True
                     print("you lose!")
-
             if end is True:
-                break
+                pygame.quit()
+                exit()
+
+            # Handling exit
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -131,6 +126,7 @@ class App:
             pygame.event.pump()
             keys = pygame.key.get_pressed()
 
+            # Handling control
             if keys[K_RIGHT]:
                 self.player.move_right()
 
@@ -144,14 +140,13 @@ class App:
                 self.player.move_down()
 
             if keys[K_ESCAPE]:
-                self._running = False
+                pygame.quit()
+                exit()
 
-            self.on_loop()
             self.on_render()
 
-        self.on_cleanup()
 
-
+# Start program
 if __name__ == "__main__":
     theApp = App()
     theApp.on_execute()

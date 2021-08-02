@@ -1,6 +1,7 @@
 from pygame.locals import *
 import pygame
 from sys import exit
+import time
 
 
 class Player:
@@ -78,7 +79,7 @@ class App:
         maze_height = 12
         self.maze = MazeCreator(maze_width, maze_height, maze=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                                                1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
-                                                               1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1,
+                                                               1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
                                                                1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
                                                                1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
                                                                1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
@@ -106,8 +107,8 @@ class App:
     # Main part
     def on_execute(self):
         self.on_init()
-        end = False
         collision_list = self.maze.collisions()
+        counter_of_loses = 0
 
         while True:
 
@@ -116,11 +117,11 @@ class App:
             # Handling collision
             for i in collision_list:
                 if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
-                    end = True
-                    print("you lose!")
-            if end is True:
-                pygame.quit()
-                exit()
+                    self.player.x = 70  # Back to start location
+                    self.player.y = 64  # Back to start location
+                    time.sleep(0.3)
+                    counter_of_loses += 1
+                    print(counter_of_loses)
 
             # Handling exit
             for event in pygame.event.get():
@@ -147,6 +148,16 @@ class App:
             if keys[K_ESCAPE]:
                 pygame.quit()
                 exit()
+
+            # Handling display frame
+            if self.player.x <= 0:
+                self.player.x = 0
+            elif self.player.x >= 790:  # 790 - ( display_width - 10 )
+                self.player.x = 790  # 790 - ( display_width - 10 )
+            if self.player.y >= 590:  # 590 - ( display-height - 10 )
+                self.player.y = 590  # 590 - ( display-height - 10 )
+            elif self.player.y <= 0:
+                self.player.y = 0
 
             # Render display and maze
             self.on_render()

@@ -6,7 +6,7 @@ import time
 
 class Player:
     x = 70  # x start location
-    y = 64  # y start location
+    y = 70  # y start location
     speed_of_movement = 0.2
 
     # Control settings
@@ -94,12 +94,13 @@ class App:
         pygame.init()
         self._display_surf = pygame.display.set_mode((self.window_width, self.window_height))
 
-        pygame.display.set_caption('DotGame')
+        pygame.display.set_icon(pygame.image.load('icon.png'))  # Set icon
+        pygame.display.set_caption('DotGame')  # Set title
         self._image_surf = pygame.image.load("player.png").convert()
         self._block_surf = pygame.image.load("block.jpeg").convert()
 
     def on_render(self):
-        self._display_surf.fill((0, 0, 0))
+        self._display_surf.fill((0, 35, 35))
         self._display_surf.blit(self._image_surf, (self.player.x, self.player.y))
         self.maze.draw(self._display_surf, self._block_surf)
         pygame.display.flip()
@@ -118,8 +119,8 @@ class App:
             for i in collision_list:
                 if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
                     self.player.x = 70  # Back to start location
-                    self.player.y = 64  # Back to start location
-                    time.sleep(0.3)
+                    self.player.y = 70  # Back to start location
+                    time.sleep(0.4)
                     counter_of_loses += 1
                     print(counter_of_loses)
 

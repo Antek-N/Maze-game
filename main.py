@@ -99,7 +99,9 @@ class App:
         self._image_surf = pygame.image.load("player.png").convert()
         self._block_surf = pygame.image.load("block.jpeg").convert()
 
-    def to_time(self, ms):
+    def to_time(self, ms, actual):
+
+        ms -= actual
 
         m = ms // 60000
         ms = ms - 60000 * m
@@ -136,12 +138,15 @@ class App:
     # Main part
     def on_execute(self):
 
+        save_file = open("data.txt", "a+")
+        save_file.write("\n\n" + time.asctime() + ":" + "\n")
         start_ticks = pygame.time.get_ticks()
         counter_of_loses = 0
         self.on_init()
         collision_list = self.maze.collisions()
         font_color = (0, 0, 0)
         font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)
+        actual = 0  # variable which take actual ticks when program must set time to 0
 
         while True:
 
@@ -158,6 +163,8 @@ class App:
                     self.player.y = 70  # Back to start location
                     time.sleep(0.4)
                     counter_of_loses += 1
+                    save_file.write(App.to_time(self, milliseconds, actual) + "- Lose no. " + str(counter_of_loses) + "\n")
+                    actual = pygame.time.get_ticks()
 
             # Handling exit
             for event in pygame.event.get():
@@ -197,7 +204,7 @@ class App:
 
             # RENDER DISPLAY AND MAZE
 
-            timer = font_obj.render("Time: " + App.to_time(self, milliseconds), True, font_color)
+            timer = font_obj.render("Time: " + App.to_time(self, milliseconds, actual), True, font_color)
             text_obj = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
             self.on_render(text_obj, timer)
 

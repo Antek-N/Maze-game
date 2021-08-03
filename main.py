@@ -99,17 +99,44 @@ class App:
         self._image_surf = pygame.image.load("player.png").convert()
         self._block_surf = pygame.image.load("block.jpeg").convert()
 
-    def on_render(self, counter_of_loses):
+    def to_time(self, ms):
+
+        m = ms // 60000
+        ms = ms - 60000 * m
+        m = str(m)
+
+        # ------------------------ /\ declare minutes /\
+
+        s = ms // 1000
+        ms = ms - 1000 * s
+        s = str(s)
+        if len(s) < 2:
+            s = "0" + s
+
+        # ------------------------ /\ declare seconds /\
+
+        ms = round(ms / 100)
+        ms = str(ms)
+        if len(ms) < 2:
+            ms = "0" + ms
+
+        # ------------------------ /\ declare milliseconds /\
+
+        return m + ":" + s + ":" + ms
+
+    def on_render(self, counter_of_loses, timer):
         pygame.display.set_caption("DotGame")
         self._display_surf.fill((0, 35, 35))
         self._display_surf.blit(self._image_surf, (self.player.x, self.player.y))
         self.maze.draw(self._display_surf, self._block_surf)
         self._display_surf.blit(counter_of_loses, (50, 0))
+        self._display_surf.blit(timer, (525, 0))
         pygame.display.flip()
 
     # Main part
     def on_execute(self):
 
+        start_ticks = pygame.time.get_ticks()
         counter_of_loses = 0
         self.on_init()
         collision_list = self.maze.collisions()
@@ -118,8 +145,9 @@ class App:
 
         while True:
 
-            # Making text (counter of losing)
-            text_obj = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
+            # TIME COUNTER
+
+            milliseconds = pygame.time.get_ticks() - start_ticks
 
             # HANDLE EVENTS
 
@@ -167,8 +195,11 @@ class App:
             elif self.player.y <= 0:
                 self.player.y = 0
 
-            # Render display and maze
-            self.on_render(text_obj)
+            # RENDER DISPLAY AND MAZE
+
+            timer = font_obj.render("Time: " + App.to_time(self, milliseconds), True, font_color)
+            text_obj = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
+            self.on_render(text_obj, timer)
 
 
 # Start program

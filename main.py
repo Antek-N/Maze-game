@@ -7,7 +7,7 @@ import time
 class Player:
     x = 70  # x start location
     y = 70  # y start location
-    speed_of_movement = 0.2
+    speed_of_movement = 0.4
 
     # Control settings
     def move_right(self):
@@ -99,19 +99,27 @@ class App:
         self._image_surf = pygame.image.load("player.png").convert()
         self._block_surf = pygame.image.load("block.jpeg").convert()
 
-    def on_render(self):
+    def on_render(self, counter_of_loses):
+        pygame.display.set_caption("DotGame")
         self._display_surf.fill((0, 35, 35))
         self._display_surf.blit(self._image_surf, (self.player.x, self.player.y))
         self.maze.draw(self._display_surf, self._block_surf)
+        self._display_surf.blit(counter_of_loses, (50, 0))
         pygame.display.flip()
 
     # Main part
     def on_execute(self):
+
+        counter_of_loses = 0
         self.on_init()
         collision_list = self.maze.collisions()
-        counter_of_loses = 0
+        font_color = (0, 0, 0)
+        font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)
 
         while True:
+
+            # Making text (counter of losing)
+            text_obj = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
 
             # HANDLE EVENTS
 
@@ -122,7 +130,6 @@ class App:
                     self.player.y = 70  # Back to start location
                     time.sleep(0.4)
                     counter_of_loses += 1
-                    print(counter_of_loses)
 
             # Handling exit
             for event in pygame.event.get():
@@ -161,7 +168,7 @@ class App:
                 self.player.y = 0
 
             # Render display and maze
-            self.on_render()
+            self.on_render(text_obj)
 
 
 # Start program

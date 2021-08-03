@@ -50,7 +50,7 @@ class MazeCreator:
         return self.list_of_blocks
 
     # Drawing maze
-    def draw(self, display_surf, image_surf):
+    def draw(self, display_surf, image_surf, finish_block_surf):
         index_x = 0
         index_y = 0
 
@@ -58,6 +58,8 @@ class MazeCreator:
 
             if self.maze[index_x + (index_y * self.width)] == 1:
                 display_surf.blit(image_surf, (index_x * 50, index_y * 50))
+
+            display_surf.blit(finish_block_surf, ((9 - 1) * 50, (12 - 1) * 50))
 
             index_x = index_x + 1
             if index_x > self.width - 1:
@@ -98,6 +100,7 @@ class App:
         pygame.display.set_caption('DotGame')  # Set title
         self._image_surf = pygame.image.load("player.png").convert()
         self._block_surf = pygame.image.load("block.jpeg").convert()
+        self._finish_block_surf = pygame.image.load("finish_block.jpeg").convert()
 
     def to_time(self, ms, actual):
 
@@ -130,7 +133,7 @@ class App:
         pygame.display.set_caption("DotGame")
         self._display_surf.fill((0, 35, 35))
         self._display_surf.blit(self._image_surf, (self.player.x, self.player.y))
-        self.maze.draw(self._display_surf, self._block_surf)
+        self.maze.draw(self._display_surf, self._block_surf, self._finish_block_surf)
         self._display_surf.blit(counter_of_loses, (50, 0))
         self._display_surf.blit(timer, (525, 0))
         pygame.display.flip()
@@ -139,7 +142,6 @@ class App:
     def on_execute(self):
 
         save_file = open("data.txt", "a+")
-        save_file.write("\n\n" + time.asctime() + ":" + "\n")
         start_ticks = pygame.time.get_ticks()
         counter_of_loses = 0
         self.on_init()
@@ -156,6 +158,15 @@ class App:
 
             # HANDLE EVENTS
 
+            if 390 < self.player.x < 440 and 540 < self.player.y < 590:
+                save_file.write("\n\n" + time.asctime() + ":" + "\n")
+                message = App.to_time(self, milliseconds, actual) + "- Tries no. " + str(counter_of_loses + 1) + "\n"
+                save_file.write(message)
+                time.sleep(0.4)
+                pygame.quit()
+                exit()
+
+
             # Handling collision
             for i in collision_list:
                 if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
@@ -163,7 +174,6 @@ class App:
                     self.player.y = 70  # Back to start location
                     time.sleep(0.4)
                     counter_of_loses += 1
-                    save_file.write(App.to_time(self, milliseconds, actual) + "- Lose no. " + str(counter_of_loses) + "\n")
                     actual = pygame.time.get_ticks()
 
             # Handling exit

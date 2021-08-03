@@ -166,7 +166,6 @@ class App:
                 pygame.quit()
                 exit()
 
-
             # Handling collision
             for i in collision_list:
                 if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:

@@ -110,7 +110,7 @@ class App:
         ms = ms - 60000 * m
         m = str(m)
 
-        # ------------------------ /\ declare minutes /\
+        #  declare minutes /\
 
         s = ms // 1000
         ms = ms - 1000 * s
@@ -118,14 +118,14 @@ class App:
         if len(s) < 2:
             s = "0" + s
 
-        # ------------------------ /\ declare seconds /\
+        #  declare seconds /\
 
         ms = round(ms / 100)
         ms = str(ms)
         if len(ms) < 2:
             ms = "0" + ms
 
-        # ------------------------ /\ declare milliseconds /\
+        #  declare milliseconds /\
 
         return m + ":" + s + ":" + ms
 

@@ -76,6 +76,7 @@ class App:
         self._display_surf = None
         self._image_surf = None
         self._block_surf = None
+        self._finish_block_surf = None
         self.player = Player()
         maze_width = 16
         maze_height = 12
@@ -142,7 +143,6 @@ class App:
     def on_execute(self):
 
         save_file = open("data.txt", "a+")
-        start_ticks = pygame.time.get_ticks()
         counter_of_loses = 0
         self.on_init()
         collision_list = self.maze.collisions()
@@ -154,7 +154,7 @@ class App:
 
             # TIME COUNTER
 
-            milliseconds = pygame.time.get_ticks() - start_ticks
+            milliseconds = pygame.time.get_ticks()
 
             # HANDLE EVENTS
 

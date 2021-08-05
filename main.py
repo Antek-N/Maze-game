@@ -5,9 +5,10 @@ import time
 
 
 class Player:
-    x = 70  # x start location
-    y = 70  # y start location
-    speed_of_movement = 0.4
+    def __init__(self, x, y):
+        self.x = x * 50 - 30  # x start location
+        self.y = y * 50 - 30  # y start location
+        self.speed_of_movement = 0.4
 
     # Control settings
     def move_right(self):
@@ -51,30 +52,32 @@ class MazeCreator:
 
     # Drawing maze
     def draw(self, display_surf, maze_color):
-        index_x = 0
-        index_y = 0
+        self.index_x = 0
+        self.index_y = 0
 
         for i in range(0, self.width * self.height):
 
-            if self.maze[index_x + (index_y * self.width)] == 1:
-                pygame.draw.rect(display_surf, maze_color, (index_x * 50, index_y * 50, 50, 50))
+            if self.maze[self.index_x + (self.index_y * self.width)] == 1:
+                pygame.draw.rect(display_surf, maze_color, (self.index_x * 50, self.index_y * 50, 50, 50))
 
-            index_x = index_x + 1
-            if index_x > self.width - 1:
-                index_x = 0
-                index_y = index_y + 1
+            self.index_x += 1
+            if self.index_x > self.width - 1:
+                self.index_x = 0
+                self.index_y += 1
 
 
 class App:
 
-    def __init__(self, background_color, maze_width, maze_height, maze_color, maze):
+    def __init__(self, player_start_x, player_start_y, background_color, maze_width, maze_height, maze_color, maze):
+        self.player_start_x = player_start_x
+        self.player_start_y = player_start_y
         self.background_color = background_color
         self.maze_width = maze_width
         self.maze_height = maze_height
         self.maze_color = maze_color
         self.maze = MazeCreator(maze_width, maze_height, maze)
         self.display = None
-        self.player = Player()
+        self.player = Player(player_start_x, player_start_y)
 
     def on_init(self):
         pygame.init()
@@ -137,8 +140,8 @@ class App:
             # Handling collision
             for i in collision_list:
                 if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
-                    self.player.x = 70  # Back to start location
-                    self.player.y = 70  # Back to start location
+                    self.player.x = self.player_start_x * 50 - 30  # Back to start location
+                    self.player.y = self.player_start_y * 50 - 30  # Back to start location
                     time.sleep(0.4)
                     counter_of_loses += 1
                     actual = pygame.time.get_ticks()
@@ -190,18 +193,18 @@ class App:
 
 # Start program
 if __name__ == "__main__":
-    # level<number> = App(background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan )
-    level1 = App((0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                                    1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
-                                                    1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
-                                                    1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-                                                    1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-                                                    1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-                                                    1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
-                                                    1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
-                                                    1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
-                                                    1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
-                                                    1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
-                                                    1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
+    # level = App(player_x, player_y, background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan)
+    level1 = App(2, 2, (0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                                          1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+                                                          1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+                                                          1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                                                          1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+                                                          1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+                                                          1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
+                                                          1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+                                                          1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+                                                          1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
+                                                          1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+                                                          1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
 
     level1.on_execute()

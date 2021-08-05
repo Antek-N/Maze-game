@@ -50,16 +50,14 @@ class MazeCreator:
         return self.list_of_blocks
 
     # Drawing maze
-    def draw(self, display_surf, image_surf, finish_block_surf):
+    def draw(self, display_surf, maze_color):
         index_x = 0
         index_y = 0
 
         for i in range(0, self.width * self.height):
 
             if self.maze[index_x + (index_y * self.width)] == 1:
-                display_surf.blit(image_surf, (index_x * 50, index_y * 50))
-
-            display_surf.blit(finish_block_surf, ((9 - 1) * 50, (12 - 1) * 50))
+                pygame.draw.rect(display_surf, maze_color, (index_x * 50, index_y * 50, 50, 50))
 
             index_x = index_x + 1
             if index_x > self.width - 1:
@@ -68,87 +66,65 @@ class MazeCreator:
 
 
 class App:
-    window_width = 800
-    window_height = 600
-    player = 0
 
-    def __init__(self):
-        self._display_surf = None
-        self._image_surf = None
-        self._block_surf = None
-        self._finish_block_surf = None
+    def __init__(self, background_color, maze_width, maze_height, maze_color, maze):
+        self.background_color = background_color
+        self.maze_width = maze_width
+        self.maze_height = maze_height
+        self.maze_color = maze_color
+        self.maze = MazeCreator(maze_width, maze_height, maze)
+        self.display = None
         self.player = Player()
-        maze_width = 16
-        maze_height = 12
-        self.maze = MazeCreator(maze_width, maze_height, maze=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                                               1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
-                                                               1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
-                                                               1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-                                                               1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-                                                               1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-                                                               1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
-                                                               1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
-                                                               1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
-                                                               1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
-                                                               1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
-                                                               1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
 
     def on_init(self):
         pygame.init()
-        self._display_surf = pygame.display.set_mode((self.window_width, self.window_height))
+        self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # Make display
 
-        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
-        pygame.display.set_caption('DotGame')  # Set title
-        self._image_surf = pygame.image.load(r"img\player.png").convert()
-        self._block_surf = pygame.image.load(r"img\block.jpeg").convert()
-        self._finish_block_surf = pygame.image.load(r"img\finish_block.jpeg").convert()
-
-    def to_time(self, ms, actual):
+    @staticmethod
+    def to_time(ms, actual):
 
         ms -= actual
 
+        # Declare minutes
         m = ms // 60000
         ms = ms - 60000 * m
         m = str(m)
 
-        #  declare minutes /\
-
+        # Declare seconds
         s = ms // 1000
         ms = ms - 1000 * s
         s = str(s)
         if len(s) < 2:
             s = "0" + s
 
-        #  declare seconds /\
-
+        # Declare milliseconds
         ms = round(ms / 100)
         ms = str(ms)
         if len(ms) < 2:
             ms = "0" + ms
 
-        #  declare milliseconds /\
-
         return m + ":" + s + ":" + ms
 
-    def on_render(self, counter_of_loses, timer):
-        pygame.display.set_caption("DotGame")
-        self._display_surf.fill((0, 35, 35))
-        self._display_surf.blit(self._image_surf, (self.player.x, self.player.y))
-        self.maze.draw(self._display_surf, self._block_surf, self._finish_block_surf)
-        self._display_surf.blit(counter_of_loses, (50, 0))
-        self._display_surf.blit(timer, (525, 0))
+    def on_render(self, loses_counter, timer):
+        self.display.fill(self.background_color)  # Drawing display
+        self.maze.draw(self.display, self.maze_color)  # Drawing maze
+        self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
+        self.display.blit(timer, (525, 0))  # Drawing timer
+        pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
         pygame.display.flip()
 
     # Main part
     def on_execute(self):
 
-        save_file = open("data.txt", "a+")
+        pygame.display.set_caption("DotGame")  # Set title
+        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
+        data_file = open(r"data.txt", "a+")  # Open data file
         counter_of_loses = 0
-        self.on_init()
-        collision_list = self.maze.collisions()
-        font_color = (0, 0, 0)
-        font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)
         actual = 0  # variable which take actual ticks when program must set time to 0
+        collision_list = self.maze.collisions()
+        font_color = (0, 0, 0)  # Set color of text
+        self.on_init()
+        font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
 
         while True:
 
@@ -157,14 +133,6 @@ class App:
             milliseconds = pygame.time.get_ticks()
 
             # HANDLE EVENTS
-
-            if 390 < self.player.x < 440 and 540 < self.player.y < 590:
-                save_file.write("\n\n" + time.asctime() + ":" + "\n")
-                message = App.to_time(self, milliseconds, actual) + "- Tries no. " + str(counter_of_loses + 1) + "\n"
-                save_file.write(message)
-                time.sleep(0.4)
-                pygame.quit()
-                exit()
 
             # Handling collision
             for i in collision_list:
@@ -201,24 +169,39 @@ class App:
                 pygame.quit()
                 exit()
 
-            # Handling display frame
-            if self.player.x <= 0:
-                self.player.x = 0
-            elif self.player.x >= 790:  # 790 - ( display_width - 10 )
-                self.player.x = 790  # 790 - ( display_width - 10 )
-            if self.player.y >= 590:  # 590 - ( display-height - 10 )
-                self.player.y = 590  # 590 - ( display-height - 10 )
-            elif self.player.y <= 0:
-                self.player.y = 0
+            # Handling finish (display frame)
+            if self.player.x <= 0 \
+               or self.player.x >= self.maze_width * 50 - 10 \
+               or self.player.y >= self.maze_height * 50 - 10 \
+               or self.player.y <= 0:
+                data_file.write("\n\n" + time.asctime() + ":" + "\n")
+                message = App.to_time(milliseconds, actual) + "- Tries no. " + str(counter_of_loses + 1) + "\n"
+                data_file.write(message)
+                time.sleep(0.4)
+                pygame.quit()
+                exit()
 
             # RENDER DISPLAY AND MAZE
 
-            timer = font_obj.render("Time: " + App.to_time(self, milliseconds, actual), True, font_color)
-            text_obj = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
-            self.on_render(text_obj, timer)
+            timer = font_obj.render("Time: " + App.to_time(milliseconds, actual), True, font_color)
+            loses_counter = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
+            self.on_render(loses_counter, timer)
 
 
 # Start program
 if __name__ == "__main__":
-    theApp = App()
-    theApp.on_execute()
+    # level<number> = App(background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan )
+    level1 = App((0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                                    1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+                                                    1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+                                                    1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                                                    1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+                                                    1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+                                                    1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
+                                                    1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+                                                    1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+                                                    1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
+                                                    1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+                                                    1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
+
+    level1.on_execute()

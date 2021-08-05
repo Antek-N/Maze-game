@@ -97,11 +97,11 @@ class App:
         pygame.init()
         self._display_surf = pygame.display.set_mode((self.window_width, self.window_height))
 
-        pygame.display.set_icon(pygame.image.load('icon.png'))  # Set icon
+        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
         pygame.display.set_caption('DotGame')  # Set title
-        self._image_surf = pygame.image.load("player.png").convert()
-        self._block_surf = pygame.image.load("block.jpeg").convert()
-        self._finish_block_surf = pygame.image.load("finish_block.jpeg").convert()
+        self._image_surf = pygame.image.load(r"img\player.png").convert()
+        self._block_surf = pygame.image.load(r"img\block.jpeg").convert()
+        self._finish_block_surf = pygame.image.load(r"img\finish_block.jpeg").convert()
 
     def to_time(self, ms, actual):
 

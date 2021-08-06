@@ -112,7 +112,7 @@ class App:
         self.display.fill(self.background_color)  # Drawing display
         self.maze.draw(self.display, self.maze_color)  # Drawing maze
         self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
-        self.display.blit(timer, (525, 0))  # Drawing timer
+        self.display.blit(timer, (self.maze_width * 50 - 275, 0))  # Drawing timer
         pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
         pygame.display.flip()
 

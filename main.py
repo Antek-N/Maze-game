@@ -109,18 +109,26 @@ class App:
 
         return m + ":" + s + ":" + ms
 
-    def on_render(self, loses_counter, timer):
+    def on_render(self, loses_counter, timer, button, click, level):
         self.display.fill(self.background_color)  # Drawing display
         self.maze.draw(self.display, self.maze_color)  # Drawing maze
         self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
         self.display.blit(timer, (self.maze_width * 50 - 275, 0))  # Drawing timer
+        if level == 1:
+
+            if click:
+                pygame.draw.rect(self.display, [55, 0, 0], button)
+            else:
+                pygame.draw.rect(self.display, [255, 0, 0], button)
         pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
         pygame.display.flip()
 
     # Main part
     def on_execute(self, actual):
 
+        event = None
         pygame.display.set_caption("DotGame")  # Set title
+        click = False
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
         data_file = open(r"data.txt", "a+")  # Open data file
         counter_of_loses = 0
@@ -130,6 +138,7 @@ class App:
         font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
         clock = pygame.time.Clock()
         fps = 60
+        button = pygame.Rect(100, 100, 150, 50)
 
         level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                                                  1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
@@ -204,6 +213,14 @@ class App:
                 pygame.quit()
                 exit()
 
+            # Handling button
+            if self.level == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = event.pos
+                    if button.collidepoint(mouse_pos):
+                        print('button was pressed at {0}'.format(mouse_pos))
+                        click = True
+
             # Handling finish (display frame)
             if self.player.x <= 0 \
                or self.player.x >= self.maze_width * 50 - 10 \
@@ -230,14 +247,15 @@ class App:
 
             timer = font_obj.render("Time: " + App.to_time(milliseconds, actual), True, font_color)
             loses_counter = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
-            self.on_render(loses_counter, timer)
+            self.on_render(loses_counter, timer, button, click, self.level)
             clock.tick(fps)
+            click = False
 
 
 # Start program
 if __name__ == "__main__":
     # level = App(player_x, player_y, background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan)
-    start = App(1, 2, 2, (0, 35, 35), 28, 16, (150, 0, 0),
+    start = App(1, 2, 2, (150, 150, 150), 28, 16, (50, 50, 50),
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

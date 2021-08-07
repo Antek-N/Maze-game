@@ -8,7 +8,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x * 50 - 30  # x start location
         self.y = y * 50 - 30  # y start location
-        self.speed_of_movement = 1
+        self.speed_of_movement = 5
 
     # Control settings
     def move_right(self):
@@ -128,6 +128,8 @@ class App:
         font_color = (0, 0, 0)  # Set color of text
         self.on_init()
         font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
+        clock = pygame.time.Clock()
+        fps = 60
 
         level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                                                  1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
@@ -229,6 +231,7 @@ class App:
             timer = font_obj.render("Time: " + App.to_time(milliseconds, actual), True, font_color)
             loses_counter = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
             self.on_render(loses_counter, timer)
+            clock.tick(fps)
 
 
 # Start program
@@ -252,6 +255,6 @@ if __name__ == "__main__":
                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,])
+                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
     start.on_execute(0)

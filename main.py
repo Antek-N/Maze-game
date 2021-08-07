@@ -70,8 +70,8 @@ class App:
 
     def __init__(self, level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
         self.level = level
-        self.player_x = player_x # player start position (x)
-        self.player_y = player_y # player start position (y)
+        self.player_x = player_x  # player start position (x)
+        self.player_y = player_y  # player start position (y)
         self.background_color = background_color
         self.maze_width = maze_width
         self.maze_height = maze_height
@@ -118,13 +118,12 @@ class App:
         pygame.display.flip()
 
     # Main part
-    def on_execute(self):
+    def on_execute(self, actual):
 
         pygame.display.set_caption("DotGame")  # Set title
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
         data_file = open(r"data.txt", "a+")  # Open data file
         counter_of_loses = 0
-        actual = 0  # variable which take actual ticks when program must set time to 0
         collision_list = self.maze.collisions()
         font_color = (0, 0, 0)  # Set color of text
         self.on_init()
@@ -199,10 +198,12 @@ class App:
                 message = App.to_time(milliseconds, actual) + "- Tries no. " + str(counter_of_loses + 1) + "\n"
                 data_file.write(message)
                 time.sleep(0.4)
+                actual = pygame.time.get_ticks()
                 if self.level == 0:
                     pass
                 elif self.level == 1:
-                    level2.on_execute()
+                    actual = pygame.time.get_ticks()
+                    level2.on_execute(actual)
                 else:
                     pygame.quit()
                     exit()
@@ -230,4 +231,4 @@ if __name__ == "__main__":
                                                              1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
                                                              1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
 
-    level1.on_execute()
+    level1.on_execute(0)

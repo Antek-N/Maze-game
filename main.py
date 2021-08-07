@@ -68,16 +68,17 @@ class MazeCreator:
 
 class App:
 
-    def __init__(self, player_start_x, player_start_y, background_color, maze_width, maze_height, maze_color, maze):
-        self.player_start_x = player_start_x
-        self.player_start_y = player_start_y
+    def __init__(self, level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
+        self.level = level
+        self.player_x = player_x # player start position (x)
+        self.player_y = player_y # player start position (y)
         self.background_color = background_color
         self.maze_width = maze_width
         self.maze_height = maze_height
         self.maze_color = maze_color
         self.maze = MazeCreator(maze_width, maze_height, maze)
         self.display = None
-        self.player = Player(player_start_x, player_start_y)
+        self.player = Player(player_x, player_y)
 
     def on_init(self):
         pygame.init()
@@ -129,6 +130,23 @@ class App:
         self.on_init()
         font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
 
+        level2 = App(2, 11, 10, (0, 24, 20), 28, 15, (0, 100, 100),
+                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                      1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                      1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1,
+                      1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1,
+                      1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1,
+                      1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1,
+                      1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1,
+                      1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+                      1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1,
+                      1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1,
+                      1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1,
+                      1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                      1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1,
+                      1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+                      1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
         while True:
 
             # TIME COUNTER
@@ -140,8 +158,8 @@ class App:
             # Handling collision
             for i in collision_list:
                 if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
-                    self.player.x = self.player_start_x * 50 - 30  # Back to start location
-                    self.player.y = self.player_start_y * 50 - 30  # Back to start location
+                    self.player.x = self.player_x * 50 - 30  # Back to start location
+                    self.player.y = self.player_y * 50 - 30  # Back to start location
                     time.sleep(0.4)
                     counter_of_loses += 1
                     actual = pygame.time.get_ticks()
@@ -181,8 +199,13 @@ class App:
                 message = App.to_time(milliseconds, actual) + "- Tries no. " + str(counter_of_loses + 1) + "\n"
                 data_file.write(message)
                 time.sleep(0.4)
-                pygame.quit()
-                exit()
+                if self.level == 0:
+                    pass
+                elif self.level == 1:
+                    level2.on_execute()
+                else:
+                    pygame.quit()
+                    exit()
 
             # RENDER DISPLAY AND MAZE
 
@@ -194,17 +217,17 @@ class App:
 # Start program
 if __name__ == "__main__":
     # level = App(player_x, player_y, background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan)
-    level1 = App(2, 2, (0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                                          1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
-                                                          1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
-                                                          1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-                                                          1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-                                                          1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-                                                          1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
-                                                          1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
-                                                          1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
-                                                          1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
-                                                          1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
-                                                          1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
+    level1 = App(1, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                                             1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+                                                             1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+                                                             1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                                                             1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+                                                             1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+                                                             1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
+                                                             1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+                                                             1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+                                                             1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
+                                                             1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+                                                             1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
 
     level1.on_execute()

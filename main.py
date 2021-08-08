@@ -9,7 +9,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x * 50 - 30  # x start location
         self.y = y * 50 - 30  # y start location
-        self.speed_of_movement = 5
+        self.speed_of_movement = 2.5
 
     # Control settings
     def move_right(self):
@@ -135,6 +135,7 @@ class App:
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
                                 width=1000)
+        user_name = menu.add.text_input('Nick: ', default='', maxchar=16)
         menu.add.button('Play', start_the_game)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
@@ -159,7 +160,7 @@ class App:
         self.on_init()
         font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
         clock = pygame.time.Clock()
-        fps = 60
+        fps = 120
 
         level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -272,8 +273,6 @@ class App:
 # Start program
 if __name__ == "__main__":
     # level = App(player_x, player_y, background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan)
-    start = App(1, 2, 2, (150, 150, 150), 2, 2, (50, 50, 50),
-                [0, 0,
-                 0, 0])
+    TheApp = App(1, 0, 0, (0, 0, 0), 1, 1, (0, 0, 0), [1])
 
-    start.on_execute(0)
+    TheApp.on_execute(0)

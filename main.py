@@ -80,8 +80,9 @@ def start_the_game():
                                                              1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
                                                              1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
                                                              1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
+    actual = pygame.time.get_ticks()
 
-    level1.on_execute(0)
+    level1.on_execute(actual)
 
 
 class App:
@@ -154,6 +155,7 @@ class App:
         pygame.display.set_caption("DotGame")  # Set title
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
         data_file = open(r"data.txt", "a+")  # Open data file
+        data_file.write("\n-------")
         counter_of_loses = 0
         collision_list = self.maze.collisions()
         font_color = (0, 0, 0)  # Set color of text
@@ -248,6 +250,7 @@ class App:
                 data_file.write("\n\n" + time.asctime() + ":" + "\n")
                 message = App.to_time(milliseconds, actual) + "- Tries no. " + str(counter_of_loses + 1) + "\n"
                 data_file.write(message)
+                data_file = open(r"data.txt", "a+")
                 time.sleep(0.4)
                 actual = pygame.time.get_ticks()
                 if self.level == 0:

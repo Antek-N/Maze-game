@@ -107,7 +107,7 @@ class App:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # Make display
 
     @staticmethod
-    def to_time(ms, actual):
+    def to_time(ms, actual, is_start):
 
         ms -= actual
 
@@ -129,7 +129,7 @@ class App:
         if len(ms) < 2:
             ms = "0" + ms
 
-        return m + ":" + s + ":" + ms
+        return m + ":" + s + ":" + ms if is_start == 1 else "0:00:00"
 
     def start(self):
         menu = pygame_menu.Menu(height=300,
@@ -163,6 +163,7 @@ class App:
         font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
         clock = pygame.time.Clock()
         fps = 120
+        start_time = 0
 
         level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -211,6 +212,7 @@ class App:
                     time.sleep(0.4)
                     counter_of_loses += 1
                     actual = pygame.time.get_ticks()
+                    start_time = 0
 
             # Handling exit
             for event in pygame.event.get():
@@ -224,15 +226,27 @@ class App:
 
             if keys[K_RIGHT]:
                 self.player.move_right()
+                if start_time == 0:
+                    actual = pygame.time.get_ticks()
+                    start_time = 1
 
             if keys[K_LEFT]:
                 self.player.move_left()
+                if start_time == 0:
+                    actual = pygame.time.get_ticks()
+                    start_time = 1
 
             if keys[K_UP]:
                 self.player.move_up()
+                if start_time == 0:
+                    actual = pygame.time.get_ticks()
+                    start_time = 1
 
             if keys[K_DOWN]:
                 self.player.move_down()
+                if start_time == 0:
+                    actual = pygame.time.get_ticks()
+                    start_time = 1
 
             if keys[K_ESCAPE]:
                 pygame.quit()
@@ -248,18 +262,16 @@ class App:
                or self.player.y >= self.maze_height * 50 - 10 \
                or self.player.y <= 0:
                 data_file.write("\n\n" + time.asctime() + ":" + "\n")
-                message = App.to_time(milliseconds, actual) + "- Tries no. " + str(counter_of_loses + 1) + "\n"
+                message = "{0}- Tries no. {1}\n ".format(App.to_time(milliseconds, actual, start_time),
+                                                         str(counter_of_loses + 1))
                 data_file.write(message)
                 data_file = open(r"data.txt", "a+")
                 time.sleep(0.4)
-                actual = pygame.time.get_ticks()
                 if self.level == 0:
                     pass
                 elif self.level == 1:
-                    actual = pygame.time.get_ticks()
                     level1.on_execute(actual)
                 elif self.level == 2:
-                    actual = pygame.time.get_ticks()
                     level2.on_execute(actual)
                 else:
                     pygame.quit()
@@ -267,7 +279,7 @@ class App:
 
             # RENDER DISPLAY AND MAZE
 
-            timer = font_obj.render("Time: " + App.to_time(milliseconds, actual), True, font_color)
+            timer = font_obj.render("Time: " + App.to_time(milliseconds, actual, start_time), True, font_color)
             loses_counter = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
             self.on_render(loses_counter, timer)
             clock.tick(fps)

@@ -136,7 +136,6 @@ class App:
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
                                 width=1000)
-        user_name = menu.add.text_input('Nick: ', default='', maxchar=16)
         menu.add.button('Play', start_the_game)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)

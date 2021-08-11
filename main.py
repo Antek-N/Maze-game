@@ -131,12 +131,18 @@ class App:
 
         return m + ":" + s + ":" + ms if is_start == 1 else "0:00:00"
 
+    def records(self):
+        print("records")
+
+
     def start(self):
         menu = pygame_menu.Menu(height=300,
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
                                 width=1000)
         menu.add.button('Play', start_the_game)
+        menu.add.button('Records', self.records)
+        menu.add.button('Help', start_the_game)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 

@@ -40,9 +40,9 @@ class MazeCreator:
         for i in range(0, self.width * self.height):
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
                 self.list_of_blocks.append((self.index_x * 50 - 10,
-                                           (self.index_x + 1) * 50,
+                                            (self.index_x + 1) * 50,
                                             self.index_y * 50 - 10,
-                                           (self.index_y + 1) * 50))
+                                            (self.index_y + 1) * 50))
 
             self.index_x += 1
             if self.index_x > self.width - 1:
@@ -68,6 +68,7 @@ class MazeCreator:
 
 
 def start_the_game():
+    # Open first level
     level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                                              1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
                                                              1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
@@ -102,9 +103,9 @@ class App:
     def on_init(self):
         pygame.init()
         if self.level == 1:
-            self.display = pygame.display.set_mode((1520, 750))
+            self.display = pygame.display.set_mode((1520, 750))  # If menu
         else:
-            self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # Make display
+            self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
 
     @staticmethod
     def to_time(ms, actual, is_start):
@@ -131,9 +132,9 @@ class App:
 
         return m + ":" + s + ":" + ms if is_start == 1 else "0:00:00"
 
-    def records(self):
+    @staticmethod
+    def records():
         print("records")
-
 
     def start(self):
         menu = pygame_menu.Menu(height=300,
@@ -160,7 +161,6 @@ class App:
         pygame.display.set_caption("DotGame")  # Set title
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
         data_file = open(r"data.txt", "a+")  # Open data file
-        data_file.write("\n-------")
         counter_of_loses = 0
         collision_list = self.maze.collisions()
         font_color = (0, 0, 0)  # Set color of text
@@ -169,7 +169,8 @@ class App:
         clock = pygame.time.Clock()
         fps = 120
         start_time = 0
-
+        
+        # DEFINE LEVELS
         level2 = App(3, 15, 9, (20, 70, 20), 16, 15, (70, 70, 70),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
@@ -217,6 +218,10 @@ class App:
                       1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
         while True:
+
+            # OPEN MENU
+            if self.level == 1:
+                self.start()
 
             # TIME COUNTER
 
@@ -272,21 +277,17 @@ class App:
                 pygame.quit()
                 exit()
 
-            # Handling button
-            if self.level == 1:
-                self.start()
-
             # Handling finish (display frame)
             if self.player.x <= 0 \
-               or self.player.x >= self.maze_width * 50 - 10 \
-               or self.player.y >= self.maze_height * 50 - 10 \
-               or self.player.y <= 0:
-                data_file.write("\n\n" + time.asctime() + ":" + "\n")
-                message = "{0}- Tries no. {1}\n ".format(App.to_time(milliseconds, actual, start_time),
-                                                         str(counter_of_loses + 1))
-                data_file.write(message)
+                    or self.player.x >= self.maze_width * 50 - 10 \
+                    or self.player.y >= self.maze_height * 50 - 10 \
+                    or self.player.y <= 0:
+                data_file.write("\n\n{0}:\n{1}".format(time.asctime(), "{0}- Tries no. {1}\n ".format(
+                    App.to_time(milliseconds, actual, start_time),
+                    str(counter_of_loses + 1))))
                 data_file = open(r"data.txt", "a+")
                 time.sleep(0.4)
+                # Open new level
                 if self.level == 2:
                     level2.on_execute(actual)
                 if self.level == 3:

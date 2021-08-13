@@ -295,6 +295,7 @@ class App:
                 if self.level == 4:
                     level4.on_execute(actual)
                 else:
+                    print("You win, congratulations!")
                     pygame.quit()
                     exit()
 

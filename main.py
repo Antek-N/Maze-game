@@ -115,8 +115,8 @@ class App:
             print("New record - " + str(milliseconds - actual))
             new_record_list.append(milliseconds - actual)
         else:
-            print("Your time - " + str(milliseconds - actual) + "\nRecord - " + record_list[0])
-            new_record_list.append(record_list[0])
+            print("Your time - " + str(milliseconds - actual) + "\nRecord - " + record_list[level])
+            new_record_list.append(record_list[level])
 
         return new_record_list
 
@@ -336,8 +336,10 @@ class App:
                     new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
                     level5.on_execute(actual, record_list, new_record_list)
                 else:
+                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
+                    record_write = open("records.txt", "w")
                     for i in new_record_list:
-                        print(i)
+                        record_write.write(str(i) + "\n")
                     print("You win, congratulations!")
                     pygame.quit()
                     exit()

@@ -83,7 +83,7 @@ def start_the_game():
                                                              1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
     actual = pygame.time.get_ticks()
 
-    level1.on_execute(actual)
+    level1.on_execute(actual, [], [])
 
 
 class App:
@@ -106,6 +106,21 @@ class App:
             self.display = pygame.display.set_mode((1520, 750))  # If menu
         else:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
+
+    def is_record(self, level, milliseconds, actual, new_record_list, record_list):
+
+        level = level - 2
+
+        if milliseconds - actual < int(record_list[level]):
+            print("New record - " + str(milliseconds - actual))
+            new_record_list.append(milliseconds - actual)
+        else:
+            print("Your time - " + str(milliseconds - actual) + "\nRecord - " + record_list[0])
+            new_record_list.append(record_list[0])
+
+        return new_record_list
+
+
 
     @staticmethod
     def to_time(ms, actual, is_start):
@@ -156,7 +171,7 @@ class App:
         pygame.display.flip()
 
     # Main part
-    def on_execute(self, actual):
+    def on_execute(self, actual, record_list, new_record_list):
 
         pygame.display.set_caption("DotGame")  # Set title
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
@@ -169,7 +184,12 @@ class App:
         clock = pygame.time.Clock()
         fps = 120
         start_time = 0
-        
+        if self.level == 2:
+            record_list = []
+            record_read = open("records.txt", "r")
+            for i in record_read:
+                record_list.append(i)
+
         # DEFINE LEVELS
         level2 = App(3, 15, 9, (20, 70, 20), 16, 15, (70, 70, 70),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -304,14 +324,20 @@ class App:
                 time.sleep(0.4)
                 # Open new level
                 if self.level == 2:
-                    level2.on_execute(actual)
+                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
+                    level2.on_execute(actual, record_list, new_record_list)
                 if self.level == 3:
-                    level3.on_execute(actual)
+                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
+                    level3.on_execute(actual, record_list, new_record_list)
                 if self.level == 4:
-                    level4.on_execute(actual)
+                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
+                    level4.on_execute(actual, record_list, new_record_list)
                 if self.level == 5:
-                    level5.on_execute(actual)
+                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
+                    level5.on_execute(actual, record_list, new_record_list)
                 else:
+                    for i in new_record_list:
+                        print(i)
                     print("You win, congratulations!")
                     pygame.quit()
                     exit()
@@ -329,4 +355,4 @@ if __name__ == "__main__":
     # level = App(player_x, player_y, background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan)
     TheApp = App(1, 0, 0, (0, 0, 0), 1, 1, (0, 0, 0), [1])
 
-    TheApp.on_execute(0)
+    TheApp.on_execute(0, [], [])

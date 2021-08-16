@@ -107,7 +107,8 @@ class App:
         else:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
 
-    def is_record(self, level, milliseconds, actual, new_record_list, record_list):
+    @staticmethod
+    def is_record(level, milliseconds, actual, new_record_list, record_list):
 
         level = level - 2
 
@@ -119,8 +120,6 @@ class App:
             new_record_list.append(record_list[level])
 
         return new_record_list
-
-
 
     @staticmethod
     def to_time(ms, actual, is_start):
@@ -188,6 +187,7 @@ class App:
             record_list = []
             record_read = open("records.txt", "r")
             for i in record_read:
+                i = i.strip()
                 record_list.append(i)
 
         # DEFINE LEVELS

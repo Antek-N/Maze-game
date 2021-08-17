@@ -100,6 +100,11 @@ class App:
         self.maze = MazeCreator(maze_width, maze_height, maze)
         self.display = None
         self.player = Player(player_x, player_y)
+        record_list = []
+        record_read = open("records.txt", "r")
+        for i in record_read:
+            i = i.strip()
+            record_list.append(i)
 
     def on_init(self):
         pygame.init()
@@ -149,9 +154,14 @@ class App:
 
     @staticmethod
     def records():
-        print("records")
+
+        record_list = ""
+        record_read = open("records.txt", "r")
+        for index, i in enumerate(record_read):
+            i = i.strip()
+            record_list += "level" + str(index + 1) + "  -  " + i + "ms" + "\n"
         window = tk.Tk()
-        greeting = tk.Label(text="Hello, Tkinter")
+        greeting = tk.Label(text=record_list)
         greeting.pack()
         window.mainloop()
 
@@ -360,6 +370,7 @@ class App:
 # Start program
 if __name__ == "__main__":
     # level = App(player_x, player_y, background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan)
+
     TheApp = App(1, 0, 0, (0, 0, 0), 1, 1, (0, 0, 0), [1])
 
     TheApp.on_execute(0, [], [])

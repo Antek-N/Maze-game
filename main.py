@@ -3,6 +3,7 @@ import pygame
 from sys import exit
 import time
 import pygame_menu
+import tkinter as tk
 
 
 class Player:
@@ -149,6 +150,10 @@ class App:
     @staticmethod
     def records():
         print("records")
+        window = tk.Tk()
+        greeting = tk.Label(text="Hello, Tkinter")
+        greeting.pack()
+        window.mainloop()
 
     def start(self):
         menu = pygame_menu.Menu(height=300,

@@ -150,8 +150,10 @@ class App:
         if len(ms) < 2:
             ms = "0" + ms
 
-        return m + ":" + s + ":" + ms if is_start == 1 else "0:00:00"
+        return m + ":" + s + ":" + ms if is_start == 1 else "0:00:00
 
+    def help(self):
+        pass
     @staticmethod
     def records():
 

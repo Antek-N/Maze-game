@@ -37,7 +37,6 @@ class MazeCreator:
 
     # Handle collisions
     def collisions(self):
-
         for i in range(0, self.width * self.height):
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
                 self.list_of_blocks.append((self.index_x * 50 - 10,
@@ -68,25 +67,6 @@ class MazeCreator:
                 self.index_y += 1
 
 
-def start_the_game():
-    # Open first level
-    level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                                             1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
-                                                             1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
-                                                             1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-                                                             1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-                                                             1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-                                                             1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
-                                                             1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
-                                                             1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
-                                                             1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
-                                                             1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
-                                                             1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
-    actual = pygame.time.get_ticks()
-
-    level1.on_execute(actual, [], [])
-
-
 class App:
 
     def __init__(self, level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
@@ -100,12 +80,8 @@ class App:
         self.maze = MazeCreator(maze_width, maze_height, maze)
         self.display = None
         self.player = Player(player_x, player_y)
-        record_list = []
-        record_read = open("records.txt", "r")
-        for i in record_read:
-            i = i.strip()
-            record_list.append(i)
 
+    # CREATE DISPLAY
     def on_init(self):
         pygame.init()
         if self.level == 1:
@@ -113,24 +89,55 @@ class App:
         else:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
 
-    @staticmethod
-    def is_record(level, milliseconds, actual, new_record_list, record_list):
+    # DEFINE MENU
+    def menu(self):
+        menu = pygame_menu.Menu(height=300,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Welcome to DotMaze project!',
+                                width=1000)
+        menu.add.button('Play', self.start_the_game)
+        menu.add.button('Records', self.records)
+        menu.add.button('Help', self.start_the_game)
+        menu.add.button('Quit', pygame_menu.events.EXIT)
+        menu.mainloop(self.display)
 
+    # OPEN FIRST LEVEL
+    @staticmethod
+    def start_the_game():
+        level1.on_execute(0, [], [])
+
+    # COMPARE CURRENT TIME WITH RECORD
+    @staticmethod
+    def is_record(level, milliseconds, current_time, new_record_list, record_list):
         level = level - 2
 
-        if milliseconds - actual < int(record_list[level]):
-            print("New record - " + str(milliseconds - actual))
-            new_record_list.append(milliseconds - actual)
+        if milliseconds - current_time < int(record_list[level]):
+            print("New record - " + str(milliseconds - current_time))
+            new_record_list.append(milliseconds - current_time)
         else:
-            print("Your time - " + str(milliseconds - actual) + "\nRecord - " + record_list[level])
+            print("Your time - " + str(milliseconds - current_time) + "\nRecord - " + record_list[level])
             new_record_list.append(record_list[level])
 
         return new_record_list
 
+    # LOAD TKINTER DISPLAY WITH RECORDS LIST
     @staticmethod
-    def to_time(ms, actual, is_start):
+    def records():
+        record_list = ""
+        record_read = open("records.txt", "r")
+        for index, i in enumerate(record_read):
+            i = i.strip()
+            i = App.to_time(int(i), 0, 1)
+            record_list += f"level {str(index + 1)} - {i}\n"
+        window = tk.Tk()
+        greeting = tk.Label(text=record_list)
+        greeting.pack()
+        window.mainloop()
 
-        ms -= actual
+    # CONVERT MS TO M:SS:MS FORMAT
+    @staticmethod
+    def to_time(ms, current_time, is_start):
+        ms -= current_time
 
         # Declare minutes
         m = ms // 60000
@@ -150,35 +157,13 @@ class App:
         if len(ms) < 2:
             ms = "0" + ms
 
-        return m + ":" + s + ":" + ms if is_start == 1 else "0:00:00
+        return f"{m}:{s}:{ms}" if is_start else "0:00:00"
 
+    # LOAD TKINTER DISPLAY WITH INSTRUCTION
     def help(self):
         pass
 
-    @staticmethod
-    def records():
-
-        record_list = ""
-        record_read = open("records.txt", "r")
-        for index, i in enumerate(record_read):
-            i = i.strip()
-            record_list += "level" + str(index + 1) + "  -  " + i + "ms" + "\n"
-        window = tk.Tk()
-        greeting = tk.Label(text=record_list)
-        greeting.pack()
-        window.mainloop()
-
-    def start(self):
-        menu = pygame_menu.Menu(height=300,
-                                theme=pygame_menu.themes.THEME_DARK,
-                                title='Welcome to DotMaze project!',
-                                width=1000)
-        menu.add.button('Play', start_the_game)
-        menu.add.button('Records', self.records)
-        menu.add.button('Help', start_the_game)
-        menu.add.button('Quit', pygame_menu.events.EXIT)
-        menu.mainloop(self.display)
-
+    # RENDER DISPLAY
     def on_render(self, loses_counter, timer):
         self.display.fill(self.background_color)  # Drawing display
         self.maze.draw(self.display, self.maze_color)  # Drawing maze
@@ -187,28 +172,22 @@ class App:
         pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
         pygame.display.flip()
 
-    # Main part
-    def on_execute(self, actual, record_list, new_record_list):
-
-        pygame.display.set_caption("DotGame")  # Set title
-        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
-        data_file = open(r"data.txt", "a+")  # Open data file
-        counter_of_loses = 0
-        collision_list = self.maze.collisions()
-        font_color = (0, 0, 0)  # Set color of text
-        self.on_init()
-        font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
-        clock = pygame.time.Clock()
-        fps = 120
-        start_time = 0
-        if self.level == 2:
-            record_list = []
-            record_read = open("records.txt", "r")
-            for i in record_read:
-                i = i.strip()
-                record_list.append(i)
-
-        # DEFINE LEVELS
+    @staticmethod
+    def define_levels():
+        global level1
+        level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0),
+                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                      1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+                      1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+                      1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                      1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+                      1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+                      1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
+                      1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+                      1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+                      1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
+                      1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+                      1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
         level2 = App(3, 15, 9, (20, 70, 20), 16, 15, (70, 70, 70),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
@@ -225,7 +204,6 @@ class App:
                       1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1,
                       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-
         level3 = App(4, 2, 2, (150, 70, 20), 22, 10, (35, 35, 35),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1,
@@ -237,7 +215,6 @@ class App:
                       1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1,
                       1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0,
                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-
         level4 = App(5, 12, 10, (150, 40, 150), 20, 13, (0, 0, 100),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -252,7 +229,6 @@ class App:
                       1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
                       1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1,
                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-
         level5 = App(6, 11, 10, (0, 24, 20), 28, 15, (0, 100, 100),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -269,12 +245,55 @@ class App:
                       1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1,
                       1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
                       1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+        return level2, level3, level4, level5
+
+    def open_new_level(self, current_time, level2, level3, level4, level5, milliseconds, new_record_list, record_list):
+        if self.level == 2:
+            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+            level2.on_execute(current_time, record_list, new_record_list)
+        if self.level == 3:
+            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+            level3.on_execute(current_time, record_list, new_record_list)
+        if self.level == 4:
+            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+            level4.on_execute(current_time, record_list, new_record_list)
+        if self.level == 5:
+            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+            level5.on_execute(current_time, record_list, new_record_list)
+        else:
+            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+            record_write = open("records.txt", "w")
+            for i in new_record_list:
+                record_write.write(str(i) + "\n")
+            print("You win, congratulations!")
+            pygame.quit()
+            exit()
+
+    # MAIN PART
+    def on_execute(self, current_time, record_list, new_record_list):
+        pygame.display.set_caption("DotGame")  # Set title
+        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
+        data_file = open(r"data.txt", "a+")  # Open data file
+        counter_of_loses = 0
+        collision_list = self.maze.collisions()
+        font_color = (0, 0, 0)  # Set color of text
+        self.on_init()
+        font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
+        clock = pygame.time.Clock()
+        fps = 120
+        start_time = 0
+        if self.level == 2:
+            record_read = open("records.txt", "r")
+            record_list = [line.strip() for line in record_read]
+
+        # DEFINE LEVELS
+        level2, level3, level4, level5 = self.define_levels()
 
         while True:
 
             # OPEN MENU
             if self.level == 1:
-                self.start()
+                self.menu()
 
             # TIME COUNTER
 
@@ -289,7 +308,7 @@ class App:
                     self.player.y = self.player_y * 50 - 30  # Back to start location
                     time.sleep(0.4)
                     counter_of_loses += 1
-                    actual = pygame.time.get_ticks()
+                    current_time = pygame.time.get_ticks()
                     start_time = 0
 
             # Handling exit
@@ -305,25 +324,25 @@ class App:
             if keys[K_RIGHT]:
                 self.player.move_right()
                 if start_time == 0:
-                    actual = pygame.time.get_ticks()
+                    current_time = pygame.time.get_ticks()
                     start_time = 1
 
             if keys[K_LEFT]:
                 self.player.move_left()
                 if start_time == 0:
-                    actual = pygame.time.get_ticks()
+                    current_time = pygame.time.get_ticks()
                     start_time = 1
 
             if keys[K_UP]:
                 self.player.move_up()
                 if start_time == 0:
-                    actual = pygame.time.get_ticks()
+                    current_time = pygame.time.get_ticks()
                     start_time = 1
 
             if keys[K_DOWN]:
                 self.player.move_down()
                 if start_time == 0:
-                    actual = pygame.time.get_ticks()
+                    current_time = pygame.time.get_ticks()
                     start_time = 1
 
             if keys[K_ESCAPE]:
@@ -335,45 +354,22 @@ class App:
                     or self.player.x >= self.maze_width * 50 - 10 \
                     or self.player.y >= self.maze_height * 50 - 10 \
                     or self.player.y <= 0:
-                data_file.write("\n\n{0}:\n{1}".format(time.asctime(), "{0}- Tries no. {1}\n ".format(
-                    App.to_time(milliseconds, actual, start_time),
-                    str(counter_of_loses + 1))))
+                data_file.write(f"\n\n{time.asctime()}:\n{App.to_time(milliseconds, current_time, start_time)} - "
+                                f"Tries no. {str(counter_of_loses + 1)}")
                 data_file = open(r"data.txt", "a+")
                 time.sleep(0.4)
                 # Open new level
-                if self.level == 2:
-                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
-                    level2.on_execute(actual, record_list, new_record_list)
-                if self.level == 3:
-                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
-                    level3.on_execute(actual, record_list, new_record_list)
-                if self.level == 4:
-                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
-                    level4.on_execute(actual, record_list, new_record_list)
-                if self.level == 5:
-                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
-                    level5.on_execute(actual, record_list, new_record_list)
-                else:
-                    new_record_list = self.is_record(self.level, milliseconds, actual, new_record_list, record_list)
-                    record_write = open("records.txt", "w")
-                    for i in new_record_list:
-                        record_write.write(str(i) + "\n")
-                    print("You win, congratulations!")
-                    pygame.quit()
-                    exit()
+                self.open_new_level(current_time, level2, level3, level4, level5, milliseconds, new_record_list,
+                                    record_list)
 
             # RENDER DISPLAY AND MAZE
 
-            timer = font_obj.render("Time: " + App.to_time(milliseconds, actual, start_time), True, font_color)
-            loses_counter = font_obj.render("Loses: " + str(counter_of_loses), True, font_color)
+            timer = font_obj.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
+            loses_counter = font_obj.render(f"Loses: {str(counter_of_loses)}", True, font_color)
             self.on_render(loses_counter, timer)
             clock.tick(fps)
 
 
 # Start program
 if __name__ == "__main__":
-    # level = App(player_x, player_y, background_color, maze_width(blocks), maze_height(blocks), maze_color, maze_plan)
-
-    TheApp = App(1, 0, 0, (0, 0, 0), 1, 1, (0, 0, 0), [1])
-
-    TheApp.on_execute(0, [], [])
+    App(1, 0, 0, (0, 0, 0), 1, 1, (0, 0, 0), [1]).on_execute(0, [], [])

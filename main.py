@@ -1,3 +1,7 @@
+# DotMaze project
+# 22.08.2021
+# Antek-N
+
 from pygame.locals import *
 import pygame
 from sys import exit
@@ -69,8 +73,8 @@ class MazeCreator:
 
 class App:
 
-    def __init__(self, level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
-        self.level = level
+    def __init__(self, next_level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
+        self.next_level = next_level
         self.player_x = player_x  # player start position (x)
         self.player_y = player_y  # player start position (y)
         self.background_color = background_color
@@ -84,7 +88,7 @@ class App:
     # CREATE DISPLAY
     def on_init(self):
         pygame.init()
-        if self.level == 1:
+        if self.next_level == 1:
             self.display = pygame.display.set_mode((1520, 750))  # If menu
         else:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
@@ -97,7 +101,7 @@ class App:
                                 width=1000)
         menu.add.button('Play', self.start_the_game)
         menu.add.button('Records', self.records)
-        menu.add.button('Help', self.start_the_game)
+        menu.add.button('Help', self.help)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 
@@ -163,8 +167,66 @@ class App:
     def help(self):
         pass
 
-    # RENDER DISPLAY
-    def on_render(self, loses_counter, timer):
+    def collision_handling(self, collision_list, counter_of_loses, current_time, start_time):
+        for i in collision_list:
+            if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
+                self.player.x = self.player_x * 50 - 30  # Back to start location
+                self.player.y = self.player_y * 50 - 30  # Back to start location
+                time.sleep(0.4)
+                counter_of_loses += 1
+                current_time = pygame.time.get_ticks()
+                start_time = 0
+        return counter_of_loses, current_time, start_time
+
+    def events_handling(self, current_time, start_time):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        pygame.event.pump()
+        keys = pygame.key.get_pressed()
+        if keys[K_RIGHT]:
+            self.player.move_right()
+            if start_time == 0:
+                current_time = pygame.time.get_ticks()
+                start_time = 1
+        if keys[K_LEFT]:
+            self.player.move_left()
+            if start_time == 0:
+                current_time = pygame.time.get_ticks()
+                start_time = 1
+        if keys[K_UP]:
+            self.player.move_up()
+            if start_time == 0:
+                current_time = pygame.time.get_ticks()
+                start_time = 1
+        if keys[K_DOWN]:
+            self.player.move_down()
+            if start_time == 0:
+                current_time = pygame.time.get_ticks()
+                start_time = 1
+        if keys[K_ESCAPE]:
+            pygame.quit()
+            exit()
+        return current_time, start_time
+
+    def finish_handling(self, counter_of_loses, current_time, level2, level3, level4, level5, milliseconds,
+                        new_record_list, record_list, start_time):
+        if self.player.x <= 0 \
+                or self.player.x >= self.maze_width * 50 - 10 \
+                or self.player.y >= self.maze_height * 50 - 10 \
+                or self.player.y <= 0:
+            data_file = open(r"data.txt", "a+")
+            data_file.write(f"\n\n{time.asctime()}:\n{App.to_time(milliseconds, current_time, start_time)} - "
+                            f"Tries no. {str(counter_of_loses + 1)}")
+            time.sleep(0.4)
+            # Open new level
+            self.open_new_level(current_time, level2, level3, level4, level5, milliseconds, new_record_list,
+                                record_list)
+
+    def render_display(self, counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time):
+        timer = font_obj.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
+        loses_counter = font_obj.render(f"Loses: {str(counter_of_loses)}", True, font_color)
         self.display.fill(self.background_color)  # Drawing display
         self.maze.draw(self.display, self.maze_color)  # Drawing maze
         self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
@@ -248,20 +310,20 @@ class App:
         return level2, level3, level4, level5
 
     def open_new_level(self, current_time, level2, level3, level4, level5, milliseconds, new_record_list, record_list):
-        if self.level == 2:
-            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+        if self.next_level == 2:
+            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             level2.on_execute(current_time, record_list, new_record_list)
-        if self.level == 3:
-            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+        if self.next_level == 3:
+            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             level3.on_execute(current_time, record_list, new_record_list)
-        if self.level == 4:
-            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+        if self.next_level == 4:
+            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             level4.on_execute(current_time, record_list, new_record_list)
-        if self.level == 5:
-            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+        if self.next_level == 5:
+            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             level5.on_execute(current_time, record_list, new_record_list)
         else:
-            new_record_list = self.is_record(self.level, milliseconds, current_time, new_record_list, record_list)
+            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             record_write = open("records.txt", "w")
             for i in new_record_list:
                 record_write.write(str(i) + "\n")
@@ -273,7 +335,6 @@ class App:
     def on_execute(self, current_time, record_list, new_record_list):
         pygame.display.set_caption("DotGame")  # Set title
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
-        data_file = open(r"data.txt", "a+")  # Open data file
         counter_of_loses = 0
         collision_list = self.maze.collisions()
         font_color = (0, 0, 0)  # Set color of text
@@ -282,7 +343,7 @@ class App:
         clock = pygame.time.Clock()
         fps = 120
         start_time = 0
-        if self.level == 2:
+        if self.next_level == 2:
             record_read = open("records.txt", "r")
             record_list = [line.strip() for line in record_read]
 
@@ -291,82 +352,21 @@ class App:
 
         while True:
 
-            # OPEN MENU
-            if self.level == 1:
-                self.menu()
+            if self.next_level == 1:
+                self.menu()  # Open menu if level == 1
 
-            # TIME COUNTER
+            milliseconds = pygame.time.get_ticks()  # get current program time
 
-            milliseconds = pygame.time.get_ticks()
+            counter_of_loses, current_time, start_time = self.collision_handling(collision_list, counter_of_loses,
+                                                                                 current_time, start_time)
 
-            # HANDLE EVENTS
+            current_time, start_time = self.events_handling(current_time, start_time)
 
-            # Handling collision
-            for i in collision_list:
-                if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
-                    self.player.x = self.player_x * 50 - 30  # Back to start location
-                    self.player.y = self.player_y * 50 - 30  # Back to start location
-                    time.sleep(0.4)
-                    counter_of_loses += 1
-                    current_time = pygame.time.get_ticks()
-                    start_time = 0
+            self.finish_handling(counter_of_loses, current_time, level2, level3, level4, level5,
+                                 milliseconds, new_record_list, record_list, start_time)
 
-            # Handling exit
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+            self.render_display(counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time)
 
-            # Handling control
-            pygame.event.pump()
-            keys = pygame.key.get_pressed()
-
-            if keys[K_RIGHT]:
-                self.player.move_right()
-                if start_time == 0:
-                    current_time = pygame.time.get_ticks()
-                    start_time = 1
-
-            if keys[K_LEFT]:
-                self.player.move_left()
-                if start_time == 0:
-                    current_time = pygame.time.get_ticks()
-                    start_time = 1
-
-            if keys[K_UP]:
-                self.player.move_up()
-                if start_time == 0:
-                    current_time = pygame.time.get_ticks()
-                    start_time = 1
-
-            if keys[K_DOWN]:
-                self.player.move_down()
-                if start_time == 0:
-                    current_time = pygame.time.get_ticks()
-                    start_time = 1
-
-            if keys[K_ESCAPE]:
-                pygame.quit()
-                exit()
-
-            # Handling finish (display frame)
-            if self.player.x <= 0 \
-                    or self.player.x >= self.maze_width * 50 - 10 \
-                    or self.player.y >= self.maze_height * 50 - 10 \
-                    or self.player.y <= 0:
-                data_file.write(f"\n\n{time.asctime()}:\n{App.to_time(milliseconds, current_time, start_time)} - "
-                                f"Tries no. {str(counter_of_loses + 1)}")
-                data_file = open(r"data.txt", "a+")
-                time.sleep(0.4)
-                # Open new level
-                self.open_new_level(current_time, level2, level3, level4, level5, milliseconds, new_record_list,
-                                    record_list)
-
-            # RENDER DISPLAY AND MAZE
-
-            timer = font_obj.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
-            loses_counter = font_obj.render(f"Loses: {str(counter_of_loses)}", True, font_color)
-            self.on_render(loses_counter, timer)
             clock.tick(fps)
 
 

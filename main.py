@@ -8,6 +8,7 @@ from sys import exit
 import time
 import pygame_menu
 import tkinter as tk
+from cryptography.fernet import Fernet
 
 
 class Player:
@@ -85,6 +86,37 @@ class App:
         self.display = None
         self.player = Player(player_x, player_y)
 
+    @staticmethod
+    def write_key():
+        key = Fernet.generate_key()
+        with open("key.key", "wb") as key_file:
+            key_file.write(key)
+
+    @staticmethod
+    def load_key():
+        return open("key.key", "rb").read()
+
+    @staticmethod
+    def encrypt(filename, key):
+        f = Fernet(key)
+        with open(filename, "rb") as file:
+            # read all file data
+            file_data = file.read()
+            encrypted_data = f.encrypt(file_data)
+            with open(filename, "wb") as file:
+                file.write(encrypted_data)
+
+    @staticmethod
+    def decrypt(filename, key):
+        f = Fernet(key)
+        with open(filename, "rb") as file:
+            # read the encrypted data
+            encrypted_data = file.read()
+        # decrypt data
+        decrypted_data = f.decrypt(encrypted_data)
+        # write the original file
+        return decrypted_data
+
     # CREATE DISPLAY
     def on_init(self):
         pygame.init()
@@ -125,16 +157,24 @@ class App:
         return new_record_list
 
     # LOAD TKINTER DISPLAY WITH RECORDS LIST
-    @staticmethod
-    def records():
-        record_list = ""
-        record_read = open("records.txt", "r")
-        for index, i in enumerate(record_read):
+    def records(self):
+        record_string = ""
+        key = self.load_key()
+        key += b"736d616c6c206578747261207365637572697479"
+        # file name
+        file = "records.txt"
+        # encrypt it
+        record_list = self.decrypt(file, key)
+        record_list = str(record_list)
+        record_list = record_list.strip("'")
+        record_list = record_list.strip("b'")
+        record_list = record_list.split()
+        for index, i in enumerate(record_list):
             i = i.strip()
             i = App.to_time(int(i), 0, 1)
-            record_list += f"level {str(index + 1)} - {i}\n"
+            record_string += f"level {str(index + 1)} - {i}\n"
         window = tk.Tk()
-        greeting = tk.Label(text=record_list)
+        greeting = tk.Label(text=record_string)
         greeting.pack()
         window.mainloop()
 
@@ -326,7 +366,14 @@ class App:
             new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             record_write = open("records.txt", "w")
             for i in new_record_list:
-                record_write.write(str(i) + "\n")
+                record_write.write(str(i) + " ")
+            self.write_key()
+            key = self.load_key()
+            key += b"736d616c6c206578747261207365637572697479"
+            record_write = open("records.txt", "w")
+            file = "records.txt"
+            self.encrypt(file, key)
+
             print("You win, congratulations!")
             pygame.quit()
             exit()
@@ -344,8 +391,17 @@ class App:
         fps = 120
         start_time = 0
         if self.next_level == 2:
-            record_read = open("records.txt", "r")
-            record_list = [line.strip() for line in record_read]
+            key = self.load_key()
+            key += b"736d616c6c206578747261207365637572697479"
+            # file name
+            file = "records.txt"
+            # encrypt it
+            record_list = self.decrypt(file, key)
+            record_list = str(record_list)
+            record_list = record_list.strip("'")
+            record_list = record_list.strip("b'")
+            record_list = record_list.split()
+            print(record_list)
 
         # DEFINE LEVELS
         level2, level3, level4, level5 = self.define_levels()

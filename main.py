@@ -148,11 +148,10 @@ class App:
         level = level - 2
 
         if milliseconds - current_time < int(record_list[level]):
-            print("New record - " + str(milliseconds - current_time))
-            new_record_list.append(milliseconds - current_time)
+            print(f"New record - {str(milliseconds - current_time)}")
+            new_record_list[level] = milliseconds - current_time
         else:
-            print("Your time - " + str(milliseconds - current_time) + "\nRecord - " + record_list[level])
-            new_record_list.append(record_list[level])
+            print(f"Your time - {str(milliseconds - current_time)}\nRecord - {record_list[level]}")
 
         return new_record_list
 
@@ -177,6 +176,20 @@ class App:
         greeting = tk.Label(text=record_string)
         greeting.pack()
         window.mainloop()
+
+    def save_records(self, new_record_list):
+        record_write = open("records.txt", "w")
+        for i in new_record_list:
+            record_write.write(str(i) + " ")
+        self.write_key()
+        key = self.load_key()
+        key += b"736d616c6c206578747261207365637572697479"
+        record_write = open("records.txt", "w")
+        file = "records.txt"
+        self.encrypt(file, key)
+        print("You win, congratulations!")
+        pygame.quit()
+        exit()
 
     # CONVERT MS TO M:SS:MS FORMAT
     @staticmethod
@@ -218,9 +231,10 @@ class App:
                 start_time = 0
         return counter_of_loses, current_time, start_time
 
-    def events_handling(self, current_time, start_time):
+    def events_handling(self, current_time, start_time, new_record_list):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.save_records(new_record_list)
                 pygame.quit()
                 exit()
         pygame.event.pump()
@@ -246,6 +260,7 @@ class App:
                 current_time = pygame.time.get_ticks()
                 start_time = 1
         if keys[K_ESCAPE]:
+            self.save_records(new_record_list)
             pygame.quit()
             exit()
         return current_time, start_time
@@ -364,19 +379,7 @@ class App:
             level5.on_execute(current_time, record_list, new_record_list)
         else:
             new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
-            record_write = open("records.txt", "w")
-            for i in new_record_list:
-                record_write.write(str(i) + " ")
-            self.write_key()
-            key = self.load_key()
-            key += b"736d616c6c206578747261207365637572697479"
-            record_write = open("records.txt", "w")
-            file = "records.txt"
-            self.encrypt(file, key)
-
-            print("You win, congratulations!")
-            pygame.quit()
-            exit()
+            self.save_records(new_record_list)
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):
@@ -401,7 +404,7 @@ class App:
             record_list = record_list.strip("'")
             record_list = record_list.strip("b'")
             record_list = record_list.split()
-            print(record_list)
+            new_record_list = record_list[:]
 
         # DEFINE LEVELS
         level2, level3, level4, level5 = self.define_levels()
@@ -416,7 +419,7 @@ class App:
             counter_of_loses, current_time, start_time = self.collision_handling(collision_list, counter_of_loses,
                                                                                  current_time, start_time)
 
-            current_time, start_time = self.events_handling(current_time, start_time)
+            current_time, start_time = self.events_handling(current_time, start_time, new_record_list)
 
             self.finish_handling(counter_of_loses, current_time, level2, level3, level4, level5,
                                  milliseconds, new_record_list, record_list, start_time)

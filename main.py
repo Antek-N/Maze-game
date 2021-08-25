@@ -217,8 +217,14 @@ class App:
         return f"{m}:{s}:{ms}" if is_start else "0:00:00"
 
     # LOAD TKINTER DISPLAY WITH INSTRUCTION
-    def help(self):
-        pass
+    @staticmethod
+    def help():
+        help_message = """1. To control use arrows or WSAD
+        """
+        window = tk.Tk()
+        greeting = tk.Label(text=help_message)
+        greeting.pack()
+        window.mainloop()
 
     def collision_handling(self, collision_list, counter_of_loses, current_time, start_time):
         for i in collision_list:
@@ -239,22 +245,22 @@ class App:
                 exit()
         pygame.event.pump()
         keys = pygame.key.get_pressed()
-        if keys[K_RIGHT]:
+        if keys[K_RIGHT] or keys[K_d]:
             self.player.move_right()
             if start_time == 0:
                 current_time = pygame.time.get_ticks()
                 start_time = 1
-        if keys[K_LEFT]:
+        if keys[K_LEFT] or keys[K_a]:
             self.player.move_left()
             if start_time == 0:
                 current_time = pygame.time.get_ticks()
                 start_time = 1
-        if keys[K_UP]:
+        if keys[K_UP] or keys[K_w]:
             self.player.move_up()
             if start_time == 0:
                 current_time = pygame.time.get_ticks()
                 start_time = 1
-        if keys[K_DOWN]:
+        if keys[K_DOWN] or keys[K_s]:
             self.player.move_down()
             if start_time == 0:
                 current_time = pygame.time.get_ticks()

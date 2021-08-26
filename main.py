@@ -271,7 +271,7 @@ class App:
             exit()
         return current_time, start_time
 
-    def finish_handling(self, counter_of_loses, current_time, level2, level3, level4, level5, milliseconds,
+    def finish_handling(self, counter_of_loses, current_time, level2, level3, level4, level5, level6, milliseconds,
                         new_record_list, record_list, start_time):
         if self.player.x <= 0 \
                 or self.player.x >= self.maze_width * 50 - 10 \
@@ -282,7 +282,7 @@ class App:
                             f"Tries no. {str(counter_of_loses + 1)}")
             time.sleep(0.4)
             # Open new level
-            self.open_new_level(current_time, level2, level3, level4, level5, milliseconds, new_record_list,
+            self.open_new_level(current_time, level2, level3, level4, level5, level6, milliseconds, new_record_list,
                                 record_list)
 
     def render_display(self, counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time):
@@ -352,7 +352,22 @@ class App:
                       1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
                       1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1,
                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-        level5 = App(6, 11, 10, (0, 24, 20), 28, 15, (0, 100, 100),
+        level5 = App(6, 2, 2, (40, 150, 40), 22, 14, (70, 0, 70),
+                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                      1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1,
+                      1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1,
+                      1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1,
+                      1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1,
+                      1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1,
+                      1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+                      1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1,
+                      1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1,
+                      1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1,
+                      1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1,
+                      1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1,
+                      1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1])
+        level6 = App(7, 11, 10, (0, 24, 20), 28, 15, (0, 100, 100),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
                       1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1,
@@ -368,9 +383,9 @@ class App:
                       1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1,
                       1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
                       1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-        return level2, level3, level4, level5
+        return level2, level3, level4, level5, level6
 
-    def open_new_level(self, current_time, level2, level3, level4, level5, milliseconds, new_record_list, record_list):
+    def open_new_level(self, current_time, level2, level3, level4, level5, level6, milliseconds, new_record_list, record_list):
         if self.next_level == 2:
             new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             level2.on_execute(current_time, record_list, new_record_list)
@@ -383,6 +398,9 @@ class App:
         if self.next_level == 5:
             new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             level5.on_execute(current_time, record_list, new_record_list)
+        if self.next_level == 6:
+            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
+            level6.on_execute(current_time, record_list, new_record_list)
         else:
             new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             self.save_records(new_record_list)
@@ -413,7 +431,7 @@ class App:
             new_record_list = record_list[:]
 
         # DEFINE LEVELS
-        level2, level3, level4, level5 = self.define_levels()
+        level2, level3, level4, level5, level6 = self.define_levels()
 
         while True:
 
@@ -427,7 +445,7 @@ class App:
 
             current_time, start_time = self.events_handling(current_time, start_time, new_record_list)
 
-            self.finish_handling(counter_of_loses, current_time, level2, level3, level4, level5,
+            self.finish_handling(counter_of_loses, current_time, level2, level3, level4, level5, level6,
                                  milliseconds, new_record_list, record_list, start_time)
 
             self.render_display(counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time)

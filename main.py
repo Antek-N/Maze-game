@@ -188,8 +188,7 @@ class App:
         file = "records.txt"
         self.encrypt(file, key)
         print("You win, congratulations!")
-        pygame.quit()
-        exit()
+        self.menu()
 
     # CONVERT MS TO M:SS:MS FORMAT
     @staticmethod

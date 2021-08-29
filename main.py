@@ -9,6 +9,7 @@ import time
 import pygame_menu
 import tkinter as tk
 from cryptography.fernet import Fernet
+import sqlite3
 
 
 class Player:
@@ -273,6 +274,16 @@ class App:
                 start_time = 1
         if keys[K_ESCAPE]:
             self.save_records(new_record_list)
+
+            # database start
+            conn = sqlite3.connect('records.db')
+            c = conn.cursor()
+            c.execute(f"""INSERT INTO records VALUES 
+                            ("{nick}", "level1", "level2", "level3", "level4", "level5", "level6")""")
+            conn.commit()
+            conn.close()
+            # database end
+
             pygame.quit()
             exit()
         return current_time, start_time
@@ -415,6 +426,7 @@ class App:
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):
+
         pygame.display.set_caption("DotGame")  # Set title
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
         counter_of_loses = 0

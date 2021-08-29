@@ -131,15 +131,24 @@ class App:
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
                                 width=1000)
+        global nick
+        nick = ""
+        menu.add.text_input('nick: ', default="", onchange=self.check_name, maxchar = 16)
         menu.add.button('Play', self.start_the_game)
         menu.add.button('Records', self.records)
         menu.add.button('Help', self.help)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 
-    # OPEN FIRST LEVEL
     @staticmethod
-    def start_the_game():
+    def check_name(value):
+        global nick
+        nick = value
+
+    # OPEN FIRST LEVEL
+    def start_the_game(self):
+        if not nick:
+            self.menu()
         level1.on_execute(0, [], [])
 
     # COMPARE CURRENT TIME WITH RECORD
@@ -187,8 +196,6 @@ class App:
         record_write = open("records.txt", "w")
         file = "records.txt"
         self.encrypt(file, key)
-        print("You win, congratulations!")
-        self.menu()
 
     # CONVERT MS TO M:SS:MS FORMAT
     @staticmethod
@@ -403,6 +410,8 @@ class App:
         else:
             new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             self.save_records(new_record_list)
+            print("You win, congratulations!")
+            self.menu()
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):

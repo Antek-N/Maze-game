@@ -216,6 +216,20 @@ class App:
         record_write = open("records.txt", "w")
         file = "records.txt"
         self.encrypt(file, key)
+        # database start
+        conn = sqlite3.connect('records.db')
+        c = conn.cursor()
+        c.execute(f"""INSERT INTO records VALUES 
+                                    ("{nick}",
+                                     "{App.to_time(int(new_record_list[0]), 0, 1)}",
+                                     "{App.to_time(int(new_record_list[1]), 0, 1)}", 
+                                     "{App.to_time(int(new_record_list[2]), 0, 1)}", 
+                                     "{App.to_time(int(new_record_list[3]), 0, 1)}", 
+                                     "{App.to_time(int(new_record_list[4]), 0, 1)}", 
+                                     "{App.to_time(int(new_record_list[5]), 0, 1)}")""")
+        conn.commit()
+        conn.close()
+        # database end
 
     # CONVERT MS TO M:SS:MS FORMAT
     @staticmethod

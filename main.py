@@ -127,13 +127,15 @@ class App:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
 
     # DEFINE MENU
-    def menu(self):
-        menu = pygame_menu.Menu(height=300,
+    def menu(self, text):
+        menu = pygame_menu.Menu(height=330,
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
                                 width=1000)
         global nick
         nick = ""
+        text = text
+        menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
         menu.add.text_input('nick: ', default="", onchange=self.check_name, maxchar = 16)
         menu.add.button('Play', self.start_the_game)
         menu.add.button('Records', self.records)
@@ -148,8 +150,25 @@ class App:
 
     # OPEN FIRST LEVEL
     def start_the_game(self):
+        # database start
+        conn = sqlite3.connect('records.db')
+        c = conn.cursor()
+        c.execute(
+            """
+            SELECT nick FROM records
+            """)
+        nick_list = c.fetchall()
+        conn.commit()
+        conn.close()
+        # database end
+        new_nick_list = []
+        for i in nick_list:
+            for a in i:
+                new_nick_list.append(a)
         if not nick:
-            self.menu()
+            self.menu("Nick is required")
+        elif nick in new_nick_list:
+            self.menu("Nick is in usage")
         level1.on_execute(0, [], [])
 
     # COMPARE CURRENT TIME WITH RECORD
@@ -422,7 +441,7 @@ class App:
             new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
             self.save_records(new_record_list)
             print("You win, congratulations!")
-            self.menu()
+            self.menu("")
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):
@@ -456,7 +475,7 @@ class App:
         while True:
 
             if self.next_level == 1:
-                self.menu()  # Open menu if level == 1
+                self.menu("")  # Open menu if level == 1
 
             milliseconds = pygame.time.get_ticks()  # get current program time
 

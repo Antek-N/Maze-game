@@ -7,7 +7,6 @@ import pygame
 from sys import exit
 import time
 import pygame_menu
-import tkinter as tk
 from cryptography.fernet import Fernet
 import sqlite3
 
@@ -127,7 +126,7 @@ class App:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
 
     def register(self, text=""):
-        menu = pygame_menu.Menu(height=330,
+        menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Register',
                                 width=1000)
@@ -140,7 +139,6 @@ class App:
         menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
         menu.add.button('Continue', self.apply_register)
         menu.add.button('Back', self.menu)
-        menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 
     @staticmethod
@@ -183,7 +181,7 @@ class App:
 
     # DEFINE MENU
     def menu(self, text=""):
-        menu = pygame_menu.Menu(height=330,
+        menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
                                 width=1000)
@@ -240,7 +238,6 @@ class App:
 
         return new_record_list
 
-    # LOAD TKINTER DISPLAY WITH RECORDS LIST
     def records(self):
         record_string = ""
         key = self.load_key()
@@ -257,10 +254,14 @@ class App:
             i = i.strip()
             i = App.to_time(int(i), 0, 1)
             record_string += f"level {str(index + 1)} - {i}\n"
-        window = tk.Tk()
-        greeting = tk.Label(text=record_string)
-        greeting.pack()
-        window.mainloop()
+
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Records',
+                                width=1000)
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        menu.add.button('Back', self.menu)
+        menu.mainloop(self.display)
 
     def save_records(self, new_record_list):
         record_write = open("records.txt", "w")
@@ -312,15 +313,16 @@ class App:
 
         return f"{m}:{s}:{ms}" if is_start else "0:00:00"
 
-    # LOAD TKINTER DISPLAY WITH INSTRUCTION
-    @staticmethod
-    def help():
+    def help(self):
         help_message = """1. To control use arrows or WSAD
         """
-        window = tk.Tk()
-        greeting = tk.Label(text=help_message)
-        greeting.pack()
-        window.mainloop()
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Help',
+                                width=1000)
+        menu.add.label(help_message, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        menu.add.button('Back', self.menu)
+        menu.mainloop(self.display)
 
     def collision_handling(self, collision_list, counter_of_loses, current_time, start_time):
         for i in collision_list:

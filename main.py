@@ -126,8 +126,63 @@ class App:
         else:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
 
+    def register(self, text=""):
+        menu = pygame_menu.Menu(height=330,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Register',
+                                width=1000)
+        global nick, password
+        password = ""
+        nick = ""
+        text = text
+        menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
+        menu.add.text_input('nick: ', default="", onchange=self.check_nick, maxchar=16)
+        menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
+        menu.add.button('Continue', self.apply_register)
+        menu.add.button('Back', self.menu)
+        menu.add.button('Quit', pygame_menu.events.EXIT)
+        menu.mainloop(self.display)
+
+    @staticmethod
+    def check_nick(value):
+        global nick
+        nick = value
+
+    @staticmethod
+    def check_password(value):
+        global password
+        password = value
+
+    def apply_register(self):
+        conn = sqlite3.connect('accounts.db')
+        c = conn.cursor()
+        c.execute(
+            """
+            SELECT nick FROM accounts
+            """)
+        nick_list = c.fetchall()
+        conn.commit()
+        conn.close()
+        # database end
+        new_nick_list = []
+        for i in nick_list:
+            for a in i:
+                new_nick_list.append(a)
+        if not nick:
+            self.register("Nick is required")
+        if not password:
+            self.register("Password is required")
+        if nick in new_nick_list:
+            self.register("Nick is in usage")
+        conn = sqlite3.connect('accounts.db')
+        c = conn.cursor()
+        c.execute(f'INSERT INTO accounts VALUES ("{nick}", "{password}")')
+        conn.commit()
+        conn.close()
+        self.register("You may login")
+
     # DEFINE MENU
-    def menu(self, text):
+    def menu(self, text=""):
         menu = pygame_menu.Menu(height=330,
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
@@ -136,8 +191,9 @@ class App:
         nick = ""
         text = text
         menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
-        menu.add.text_input('nick: ', default="", onchange=self.check_name, maxchar = 16)
+        menu.add.text_input('nick: ', default="", onchange=self.check_name, maxchar=16)
         menu.add.button('Play', self.start_the_game)
+        menu.add.button('Register', self.register)
         menu.add.button('Records', self.records)
         menu.add.button('Help', self.help)
         menu.add.button('Quit', pygame_menu.events.EXIT)

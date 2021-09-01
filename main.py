@@ -125,6 +125,21 @@ class App:
         else:
             self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
 
+    def login(self, text=""):
+        global nick, password
+        password = ""
+        nick = ""
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Login',
+                                width=1000)
+        menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
+        menu.add.text_input('nick: ', default="", onchange=self.check_nick, maxchar=16)
+        menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
+        menu.add.button('Continue', self.apply_login)
+        menu.add.button('Back', self.menu)
+        menu.mainloop(self.display)
+
     def register(self, text=""):
         menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
@@ -150,6 +165,38 @@ class App:
     def check_password(value):
         global password
         password = value
+
+    def apply_login(self):
+        conn = sqlite3.connect('accounts.db')
+        c = conn.cursor()
+        c.execute(
+            """
+            SELECT nick FROM accounts
+            """)
+        nick_list = c.fetchall()
+        # database end
+        new_nick_list = []
+        for i in nick_list:
+            for a in i:
+                new_nick_list.append(a)
+
+        c.execute(
+            f"""
+            SELECT password FROM accounts WHERE nick = "{nick}"
+            """)
+        db_password = c.fetchall()
+
+        if not nick:
+            self.login("Nick is required")
+        if not password:
+            self.login("Password is required")
+        if nick not in new_nick_list:
+            self.login("Incorrect nick")
+        if password != db_password[0][0]:
+            self.login("Incorrect nick or password")
+        self.start_the_game()
+
+
 
     def apply_register(self):
         conn = sqlite3.connect('accounts.db')
@@ -177,7 +224,7 @@ class App:
         c.execute(f'INSERT INTO accounts VALUES ("{nick}", "{password}")')
         conn.commit()
         conn.close()
-        self.register("You may login")
+        self.menu("You may login")
 
     # DEFINE MENU
     def menu(self, text=""):
@@ -188,9 +235,8 @@ class App:
         global nick
         nick = ""
         text = text
-        menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
-        menu.add.text_input('nick: ', default="", onchange=self.check_name, maxchar=16)
-        menu.add.button('Play', self.start_the_game)
+        menu.add.label(text, max_char=-1, font_size=15, font_color=(255, 255, 255))
+        menu.add.button('Login', self.login)
         menu.add.button('Register', self.register)
         menu.add.button('Records', self.records)
         menu.add.button('Help', self.help)
@@ -198,31 +244,12 @@ class App:
         menu.mainloop(self.display)
 
     @staticmethod
-    def check_name(value):
+    def check_nickname(value):
         global nick
         nick = value
 
     # OPEN FIRST LEVEL
     def start_the_game(self):
-        # database start
-        conn = sqlite3.connect('records.db')
-        c = conn.cursor()
-        c.execute(
-            """
-            SELECT nick FROM records
-            """)
-        nick_list = c.fetchall()
-        conn.commit()
-        conn.close()
-        # database end
-        new_nick_list = []
-        for i in nick_list:
-            for a in i:
-                new_nick_list.append(a)
-        if not nick:
-            self.menu("Nick is required")
-        elif nick in new_nick_list:
-            self.menu("Nick is in usage")
         level1.on_execute(0, [], [])
 
     # COMPARE CURRENT TIME WITH RECORD

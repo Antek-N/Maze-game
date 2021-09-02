@@ -303,14 +303,20 @@ class App:
         # database start
         conn = sqlite3.connect('records.db')
         c = conn.cursor()
+        c.execute(
+            f"""
+                    SELECT * FROM records WHERE nick = "{nick}"
+                    """)
+        old_records = c.fetchall()
+        print(old_records[0][1:])
         c.execute(f"""INSERT INTO records VALUES 
                                     ("{nick}",
-                                     "{App.to_time(int(new_record_list[0]), 0, 1)}",
-                                     "{App.to_time(int(new_record_list[1]), 0, 1)}", 
-                                     "{App.to_time(int(new_record_list[2]), 0, 1)}", 
-                                     "{App.to_time(int(new_record_list[3]), 0, 1)}", 
-                                     "{App.to_time(int(new_record_list[4]), 0, 1)}", 
-                                     "{App.to_time(int(new_record_list[5]), 0, 1)}")""")
+                                     {int(new_record_list[0])},
+                                     {int(new_record_list[1])}, 
+                                     {int(new_record_list[2])}, 
+                                     {int(new_record_list[3])}, 
+                                     {int(new_record_list[4])}, 
+                                     {int(new_record_list[5])})""")
         conn.commit()
         conn.close()
         # database end

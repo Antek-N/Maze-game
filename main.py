@@ -309,14 +309,19 @@ class App:
                     """)
         old_records = c.fetchall()
         print(old_records[0][1:])
-        c.execute(f"""INSERT INTO records VALUES 
-                                    ("{nick}",
-                                     {int(new_record_list[0])},
-                                     {int(new_record_list[1])}, 
-                                     {int(new_record_list[2])}, 
-                                     {int(new_record_list[3])}, 
-                                     {int(new_record_list[4])}, 
-                                     {int(new_record_list[5])})""")
+        # for i in range(len(old_records)):
+        #     if int(new_record_list[i]) < old_records[0][i + 1]:
+        #         old_records[0][i + 1] = int(new_record_list[i])
+        # c.execute(f"""INSERT INTO records VALUES
+        #                                     ("{nick}",
+        #                                      {old_records[0][0]},
+        #                                      {old_records[0][1]},
+        #                                      {old_records[0][2]},
+        #                                      {old_records[0][3]},
+        #                                      {old_records[0][4]},
+        #                                      {old_records[0][5]})""")
+
+
         conn.commit()
         conn.close()
         # database end

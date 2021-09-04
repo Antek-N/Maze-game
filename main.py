@@ -219,9 +219,19 @@ class App:
             self.register("Password is required")
         if nick in new_nick_list:
             self.register("Nick is in usage")
+
         conn = sqlite3.connect('accounts.db')
         c = conn.cursor()
         c.execute(f'INSERT INTO accounts VALUES ("{nick}", "{password}")')
+        conn.commit()
+        conn.close()
+
+        conn = sqlite3.connect('records.db')
+        c = conn.cursor()
+        c.execute(
+            f"""
+            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999)
+            """)
         conn.commit()
         conn.close()
         self.menu("You may login")
@@ -310,14 +320,14 @@ class App:
                 record_list[i] = int(new_record_list[i])
         print(record_list)
         print(new_record_list)
-        c.execute(f"""INSERT INTO records VALUES
-                                            ("{nick}",
-                                             {record_list[0]},
-                                             {record_list[1]},
-                                             {record_list[2]},
-                                             {record_list[3]},
-                                             {record_list[4]},
-                                             {record_list[5]})""")
+
+        c.execute(f"""UPDATE records SET nick = '{nick}',
+                                         level1 = {record_list[0]},
+                                         level2 = {record_list[1]},
+                                         level3 = {record_list[2]},
+                                         level4 = {record_list[3]},
+                                         level5 = {record_list[4]},
+                                         level6 = {record_list[5]} WHERE nick = '{nick}';""")
 
 
         conn.commit()

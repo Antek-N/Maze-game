@@ -291,15 +291,6 @@ class App:
         menu.mainloop(self.display)
 
     def save_records(self, new_record_list):
-        record_write = open("records.txt", "w")
-        for i in new_record_list:
-            record_write.write(str(i) + " ")
-        self.write_key()
-        key = self.load_key()
-        key += b"736d616c6c206578747261207365637572697479"
-        record_write = open("records.txt", "w")
-        file = "records.txt"
-        self.encrypt(file, key)
         # database start
         conn = sqlite3.connect('records.db')
         c = conn.cursor()
@@ -307,19 +298,26 @@ class App:
             f"""
                     SELECT * FROM records WHERE nick = "{nick}"
                     """)
-        old_records = c.fetchall()
-        print(old_records[0][1:])
-        # for i in range(len(old_records)):
-        #     if int(new_record_list[i]) < old_records[0][i + 1]:
-        #         old_records[0][i + 1] = int(new_record_list[i])
-        # c.execute(f"""INSERT INTO records VALUES
-        #                                     ("{nick}",
-        #                                      {old_records[0][0]},
-        #                                      {old_records[0][1]},
-        #                                      {old_records[0][2]},
-        #                                      {old_records[0][3]},
-        #                                      {old_records[0][4]},
-        #                                      {old_records[0][5]})""")
+        old_record_list = c.fetchall()
+        print(old_record_list[0][1:])
+        record_list = []
+        for i in old_record_list[0][1:]:
+            record_list.append(i)
+        print(record_list)
+        print(new_record_list)
+        for i in range(len(new_record_list)):
+            if int(new_record_list[i]) < record_list[i]:
+                record_list[i] = int(new_record_list[i])
+        print(record_list)
+        print(new_record_list)
+        c.execute(f"""INSERT INTO records VALUES
+                                            ("{nick}",
+                                             {record_list[0]},
+                                             {record_list[1]},
+                                             {record_list[2]},
+                                             {record_list[3]},
+                                             {record_list[4]},
+                                             {record_list[5]})""")
 
 
         conn.commit()
@@ -533,22 +531,28 @@ class App:
 
     def open_new_level(self, current_time, level2, level3, level4, level5, level6, milliseconds, new_record_list, record_list):
         if self.next_level == 2:
-            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
+            new_record_list.append(milliseconds - current_time)
+            print(new_record_list)
             level2.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 3:
-            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
+            new_record_list.append(milliseconds - current_time)
+            print(new_record_list)
             level3.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 4:
-            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
+            new_record_list.append(milliseconds - current_time)
+            print(new_record_list)
             level4.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 5:
-            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
+            new_record_list.append(milliseconds - current_time)
+            print(new_record_list)
             level5.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 6:
-            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
+            new_record_list.append(milliseconds - current_time)
+            print(new_record_list)
             level6.on_execute(current_time, record_list, new_record_list)
         else:
-            new_record_list = self.is_record(self.next_level, milliseconds, current_time, new_record_list, record_list)
+            new_record_list.append(milliseconds - current_time)
+            print(new_record_list)
             self.save_records(new_record_list)
             print("You win, congratulations!")
             self.menu("")
@@ -577,7 +581,7 @@ class App:
             record_list = record_list.strip("'")
             record_list = record_list.strip("b'")
             record_list = record_list.split()
-            new_record_list = record_list[:]
+            new_record_list = []
 
         # DEFINE LEVELS
         level2, level3, level4, level5, level6 = self.define_levels()

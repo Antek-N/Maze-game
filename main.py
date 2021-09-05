@@ -131,7 +131,7 @@ class App:
         nick = ""
         menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
-                                title='Login',
+                                title='Sign in',
                                 width=1000)
         menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
         menu.add.text_input('nick: ', default="", onchange=self.check_nick, maxchar=16)
@@ -143,7 +143,7 @@ class App:
     def register(self, text=""):
         menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
-                                title='Register',
+                                title='Sign up',
                                 width=1000)
         global nick, password
         password = ""
@@ -194,7 +194,7 @@ class App:
             self.login("Incorrect nick")
         if password != db_password[0][0]:
             self.login("Incorrect nick or password")
-        self.start_the_game()
+        self.menu_when_login()
 
 
 
@@ -246,10 +246,22 @@ class App:
         nick = ""
         text = text
         menu.add.label(text, max_char=-1, font_size=15, font_color=(255, 255, 255))
-        menu.add.button('Login', self.login)
-        menu.add.button('Register', self.register)
+        menu.add.button('Sign in', self.login)
+        menu.add.button('Sign up', self.register)
+        menu.add.button('Quit', pygame_menu.events.EXIT)
+        menu.mainloop(self.display)
+
+    def menu_when_login(self, text=""):
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Welcome to DotMaze project!',
+                                width=1000)
+        text = text
+        menu.add.label(text, max_char=-1, font_size=15, font_color=(255, 255, 255))
+        menu.add.button('Play', self.start_the_game)
         menu.add.button('Records', self.records)
         menu.add.button('Help', self.help)
+        menu.add.button('Log out', self.menu)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 
@@ -262,43 +274,39 @@ class App:
     def start_the_game(self):
         level1.on_execute(0, [], [])
 
-    # COMPARE CURRENT TIME WITH RECORD
-    @staticmethod
-    def is_record(level, milliseconds, current_time, new_record_list, record_list):
-        level = level - 2
-
-        if milliseconds - current_time < int(record_list[level]):
-            print(f"New record - {str(milliseconds - current_time)}")
-            new_record_list[level] = milliseconds - current_time
-        else:
-            print(f"Your time - {str(milliseconds - current_time)}\nRecord - {record_list[level]}")
-
-        return new_record_list
-
     def records(self):
-        record_string = ""
-        key = self.load_key()
-        key += b"736d616c6c206578747261207365637572697479"
-        # file name
-        file = "records.txt"
-        # encrypt it
-        record_list = self.decrypt(file, key)
-        record_list = str(record_list)
-        record_list = record_list.strip("'")
-        record_list = record_list.strip("b'")
-        record_list = record_list.split()
-        for index, i in enumerate(record_list):
-            i = i.strip()
-            i = App.to_time(int(i), 0, 1)
-            record_string += f"level {str(index + 1)} - {i}\n"
 
         menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Records',
                                 width=1000)
-        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
-        menu.add.button('Back', self.menu)
+        menu.add.button('My records', self.my_records)
+        menu.add.button('Global records', self.global_records)
+        menu.add.button('Back', self.menu_when_login)
         menu.mainloop(self.display)
+
+    def my_records(self):
+        conn = sqlite3.connect('records.db')
+        c = conn.cursor()
+        c.execute(
+            f"""
+                            SELECT * FROM records WHERE nick = "{nick}"
+                            """)
+        old_record_list = c.fetchall()
+        record_string = ""
+        for index, i in enumerate(old_record_list[0][1:]):
+            record_string += f"level{index+1}: {App.to_time(i, 0, 1)}\n"
+
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='My records',
+                                width=1000)
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        menu.add.button('Back', self.records)
+        menu.mainloop(self.display)
+
+    def global_records(self):
+        pass
 
     def save_records(self, new_record_list):
         # database start
@@ -309,17 +317,12 @@ class App:
                     SELECT * FROM records WHERE nick = "{nick}"
                     """)
         old_record_list = c.fetchall()
-        print(old_record_list[0][1:])
         record_list = []
         for i in old_record_list[0][1:]:
             record_list.append(i)
-        print(record_list)
-        print(new_record_list)
         for i in range(len(new_record_list)):
             if int(new_record_list[i]) < record_list[i]:
                 record_list[i] = int(new_record_list[i])
-        print(record_list)
-        print(new_record_list)
 
         c.execute(f"""UPDATE records SET nick = '{nick}',
                                          level1 = {record_list[0]},
@@ -367,7 +370,7 @@ class App:
                                 title='Help',
                                 width=1000)
         menu.add.label(help_message, max_char=-1, font_size=25, font_color=(255, 255, 255))
-        menu.add.button('Back', self.menu)
+        menu.add.button('Back', self.menu_when_login)
         menu.mainloop(self.display)
 
     def collision_handling(self, collision_list, counter_of_loses, current_time, start_time):
@@ -411,18 +414,6 @@ class App:
                 start_time = 1
         if keys[K_ESCAPE]:
             self.save_records(new_record_list)
-
-            # database start
-            conn = sqlite3.connect('records.db')
-            c = conn.cursor()
-            c.execute(f"""INSERT INTO records VALUES 
-                            ("{nick}", "level1", "level2", "level3", "level4", "level5", "level6")""")
-            conn.commit()
-            conn.close()
-            # database end
-
-            pygame.quit()
-            exit()
         return current_time, start_time
 
     def finish_handling(self, counter_of_loses, current_time, level2, level3, level4, level5, level6, milliseconds,
@@ -542,30 +533,24 @@ class App:
     def open_new_level(self, current_time, level2, level3, level4, level5, level6, milliseconds, new_record_list, record_list):
         if self.next_level == 2:
             new_record_list.append(milliseconds - current_time)
-            print(new_record_list)
             level2.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 3:
             new_record_list.append(milliseconds - current_time)
-            print(new_record_list)
             level3.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 4:
             new_record_list.append(milliseconds - current_time)
-            print(new_record_list)
             level4.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 5:
             new_record_list.append(milliseconds - current_time)
-            print(new_record_list)
             level5.on_execute(current_time, record_list, new_record_list)
         if self.next_level == 6:
             new_record_list.append(milliseconds - current_time)
-            print(new_record_list)
             level6.on_execute(current_time, record_list, new_record_list)
         else:
             new_record_list.append(milliseconds - current_time)
-            print(new_record_list)
             self.save_records(new_record_list)
             print("You win, congratulations!")
-            self.menu("")
+            self.menu_when_login()
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):
@@ -581,16 +566,6 @@ class App:
         fps = 120
         start_time = 0
         if self.next_level == 2:
-            key = self.load_key()
-            key += b"736d616c6c206578747261207365637572697479"
-            # file name
-            file = "records.txt"
-            # encrypt it
-            record_list = self.decrypt(file, key)
-            record_list = str(record_list)
-            record_list = record_list.strip("'")
-            record_list = record_list.strip("b'")
-            record_list = record_list.split()
             new_record_list = []
 
         # DEFINE LEVELS

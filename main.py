@@ -1,5 +1,5 @@
 # DotMaze project
-# 22.08.2021
+# 08.09.2021
 # Antek-N
 
 from pygame.locals import *

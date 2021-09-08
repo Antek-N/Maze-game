@@ -36,6 +36,8 @@ class Menu:
         display_resolution = pygame.display.Info()
         width, height = display_resolution.current_w, display_resolution.current_h
         self.display = pygame.display.set_mode((width, height))
+        pygame.display.set_caption("DotGame")  # Set title
+        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))
 
     @staticmethod
     def check_nick(value):
@@ -55,6 +57,7 @@ class Menu:
     # OPEN FIRST LEVEL
     @staticmethod
     def start_the_game():
+        level1 = MazeCreator.define_levels(if_level1=True)
         level1.on_execute(0, [], [])
 
     def menu_when_login(self, text=""):
@@ -271,8 +274,7 @@ class MazeCreator:
                 self.index_y += 1
 
     @staticmethod
-    def define_levels():
-        global level1
+    def define_levels(if_level1):
         level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
@@ -358,7 +360,11 @@ class MazeCreator:
                       1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1,
                       1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
                       1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-        return level2, level3, level4, level5, level6
+        if if_level1:
+            return level1
+        else:
+            return level2, level3, level4, level5, level6
+
 
 class App:
 
@@ -375,8 +381,10 @@ class App:
         self.player = Player(player_x, player_y)
 
     # CREATE DISPLAY
-    def on_init(self):
-        self.display = pygame.display.set_mode((self.maze_width * 50, self.maze_height * 50))  # If maze
+    def create_display(self):
+        display_resolution = pygame.display.Info()
+        width, height = display_resolution.current_w, display_resolution.current_h
+        self.display = pygame.display.set_mode((width, height))
 
     @staticmethod
     def save_records(new_record_list):
@@ -525,21 +533,17 @@ class App:
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):
 
-        pygame.display.set_caption("DotGame")  # Set title
-        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))  # Set icon
         counter_of_loses = 0
         collision_list = self.maze.collisions()
         font_color = (0, 0, 0)  # Set color of text
-        self.on_init()
+        self.create_display()
         font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
         clock = pygame.time.Clock()
         fps = 120
         start_time = 0
-        if self.next_level == 2:
-            new_record_list = []
 
         # DEFINE LEVELS
-        level2, level3, level4, level5, level6 = MazeCreator.define_levels()
+        level2, level3, level4, level5, level6 = MazeCreator.define_levels(False)
 
         while True:
 
@@ -561,6 +565,5 @@ class App:
 # Start program
 if __name__ == "__main__":
     pygame.init()
-    MazeCreator.define_levels()
     start = Menu()
     start.menu("")

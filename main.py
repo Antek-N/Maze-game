@@ -33,7 +33,9 @@ class Player:
 class Menu:
 
     def __init__(self):
-        self.display = pygame.display.set_mode((1520, 750))
+        display_resolution = pygame.display.Info()
+        width, height = display_resolution.current_w, display_resolution.current_h
+        self.display = pygame.display.set_mode((width, height))
 
     @staticmethod
     def check_nick(value):
@@ -225,7 +227,7 @@ class Menu:
         menu.add.button('Sign in', self.login)
         menu.add.button('Sign up', self.register)
         menu.add.button('Quit', pygame_menu.events.EXIT)
-        menu.mainloop(pygame.display.set_mode((1520, 750)))
+        menu.mainloop(self.display)
 
 
 class MazeCreator:
@@ -470,6 +472,8 @@ class App:
                 start_time = 1
         if keys[K_ESCAPE]:
             self.save_records(new_record_list)
+            pygame.quit()
+            exit()
         return current_time, start_time
 
     def finish_handling(self, counter_of_loses, current_time, level2, level3, level4, level5, level6, milliseconds,
@@ -516,6 +520,7 @@ class App:
             new_record_list.append(milliseconds - current_time)
             self.save_records(new_record_list)
             print("You win, congratulations!")
+            start.menu("")
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):

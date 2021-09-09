@@ -9,11 +9,16 @@ import time
 import pygame_menu
 import sqlite3
 
-
 class Player:
-    def __init__(self, x, y):
-        self.x = x * 50 - 30  # x start location
-        self.y = y * 50 - 30  # y start location
+    def __init__(self, x, y, maze_width, maze_height):
+        display_resolution = pygame.display.Info()
+        display_width, display_height = display_resolution.current_w, display_resolution.current_h
+        display_width -= maze_width * 50
+        display_height -= maze_height * 50
+        display_width /= 2
+        display_height /= 2
+        self.x = x * 50 - 30 + display_width  # x start location
+        self.y = y * 50 - 30 + display_height  # y start location
         self.speed_of_movement = 2.5
 
     # Control settings
@@ -244,12 +249,18 @@ class MazeCreator:
 
     # Handle collisions
     def collisions(self):
+        display_resolution = pygame.display.Info()
+        display_width, display_height = display_resolution.current_w, display_resolution.current_h
+        display_width -= self.width * 50
+        display_height -= self.height * 50
+        display_width /= 2
+        display_height /= 2
         for i in range(0, self.width * self.height):
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
-                self.list_of_blocks.append((self.index_x * 50 - 10,
-                                            (self.index_x + 1) * 50,
-                                            self.index_y * 50 - 10,
-                                            (self.index_y + 1) * 50))
+                self.list_of_blocks.append((self.index_x * 50 - 10 + display_width,
+                                            (self.index_x + 1) * 50 + display_width,
+                                            self.index_y * 50 - 10 + display_height,
+                                            (self.index_y + 1) * 50 + display_height))
 
             self.index_x += 1
             if self.index_x > self.width - 1:
@@ -260,13 +271,19 @@ class MazeCreator:
 
     # Drawing maze
     def draw(self, display_surf, maze_color):
+        display_resolution = pygame.display.Info()
+        display_width, display_height = display_resolution.current_w, display_resolution.current_h
         self.index_x = 0
         self.index_y = 0
+        display_width -= self.width * 50
+        display_height -= self.height * 50
+        display_width /= 2
+        display_height /= 2
 
         for i in range(0, self.width * self.height):
 
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
-                pygame.draw.rect(display_surf, maze_color, (self.index_x * 50, self.index_y * 50, 50, 50))
+                pygame.draw.rect(display_surf, maze_color, (self.index_x * 50 + display_width, self.index_y * 50 + display_height, 50, 50))
 
             self.index_x += 1
             if self.index_x > self.width - 1:
@@ -370,21 +387,21 @@ class App:
 
     def __init__(self, next_level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
         self.next_level = next_level
-        self.player_x = player_x  # player start position (x)
-        self.player_y = player_y  # player start position (y)
+        self.player_x = player_x # player start position (x)
+        self.player_y = player_y # player start position (y)
         self.background_color = background_color
         self.maze_width = maze_width
         self.maze_height = maze_height
         self.maze_color = maze_color
         self.maze = MazeCreator(maze_width, maze_height, maze)
         self.display = None
-        self.player = Player(player_x, player_y)
+        self.player = Player(player_x, player_y, self.maze_width, self.maze_height)
+        display_resolution = pygame.display.Info()
+        self.display_width, self.display_height = display_resolution.current_w, display_resolution.current_h
 
     # CREATE DISPLAY
     def create_display(self):
-        display_resolution = pygame.display.Info()
-        width, height = display_resolution.current_w, display_resolution.current_h
-        self.display = pygame.display.set_mode((width, height))
+        self.display = pygame.display.set_mode((self.display_width, self.display_height))
 
     @staticmethod
     def save_records(new_record_list):
@@ -442,8 +459,8 @@ class App:
     def collision_handling(self, collision_list, counter_of_loses, current_time, start_time):
         for i in collision_list:
             if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
-                self.player.x = self.player_x * 50 - 30  # Back to start location
-                self.player.y = self.player_y * 50 - 30  # Back to start location
+                self.player.x = self.player_x * 50 - 30 + (self.display_width - self.maze_width * 50) / 2    # Back to start location
+                self.player.y = self.player_y * 50 - 30 + (self.display_height - self.maze_height * 50) / 2   # Back to start location
                 time.sleep(0.4)
                 counter_of_loses += 1
                 current_time = pygame.time.get_ticks()
@@ -486,10 +503,10 @@ class App:
 
     def finish_handling(self, counter_of_loses, current_time, level2, level3, level4, level5, level6, milliseconds,
                         new_record_list, record_list, start_time):
-        if self.player.x <= 0 \
-                or self.player.x >= self.maze_width * 50 - 10 \
-                or self.player.y >= self.maze_height * 50 - 10 \
-                or self.player.y <= 0:
+        if self.player.x <= 0 + (self.display_width - self.maze_width * 50) / 2 \
+                or self.player.x >= self.maze_width * 50 - 10 + (self.display_width - self.maze_width * 50) / 2 \
+                or self.player.y >= self.maze_height * 50 - 10 + (self.display_height - self.maze_height * 50) / 2 \
+                or self.player.y <= 0 + (self.display_height - self.maze_height * 50) / 2:
             data_file = open(r"data.txt", "a+")
             data_file.write(f"\n\n{time.asctime()}:\n{App.to_time(milliseconds, current_time, start_time)} - "
                             f"Tries no. {str(counter_of_loses + 1)}")
@@ -504,7 +521,7 @@ class App:
         self.display.fill(self.background_color)  # Drawing display
         self.maze.draw(self.display, self.maze_color)  # Drawing maze
         self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
-        self.display.blit(timer, (self.maze_width * 50 - 275, 0))  # Drawing timer
+        self.display.blit(timer, (self.display_width - 275, 0))  # Drawing timer
         pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
         pygame.display.flip()
 

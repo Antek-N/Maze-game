@@ -9,6 +9,7 @@ import time
 import pygame_menu
 import sqlite3
 
+
 class Player:
     def __init__(self, x, y, maze_width, maze_height):
         display_resolution = pygame.display.Info()
@@ -176,7 +177,12 @@ class Menu:
         c = conn.cursor()
         c.execute(
             f"""
-                            SELECT MIN(level1), MIN(level2), MIN(level3), MIN(level4), MIN(level5), MIN(level6) FROM records
+                            SELECT MIN(level1),
+                            MIN(level2), 
+                            MIN(level3), 
+                            MIN(level4), 
+                            MIN(level5), 
+                            MIN(level6) FROM records
                             """)
         old_record_list = c.fetchall()
         record_string = ""
@@ -190,7 +196,6 @@ class Menu:
 
         menu.add.button('Back', self.records)
         menu.mainloop(self.display)
-
 
     def apply_register(self):
         conn = sqlite3.connect('accounts.db')
@@ -301,7 +306,8 @@ class MazeCreator:
         for i in range(0, self.width * self.height):
 
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
-                pygame.draw.rect(display_surf, maze_color, (self.index_x * 50 + display_width, self.index_y * 50 + display_height, 50, 50))
+                rect_layout = self.index_x * 50 + display_width, self.index_y * 50 + display_height, 50, 50
+                pygame.draw.rect(display_surf, maze_color, rect_layout)
 
             self.index_x += 1
             if self.index_x > self.width - 1:
@@ -405,8 +411,8 @@ class App:
 
     def __init__(self, next_level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
         self.next_level = next_level
-        self.player_x = player_x # player start position (x)
-        self.player_y = player_y # player start position (y)
+        self.player_x = player_x  # player start position (x)
+        self.player_y = player_y  # player start position (y)
         self.background_color = background_color
         self.maze_width = maze_width
         self.maze_height = maze_height
@@ -467,7 +473,6 @@ class App:
             s = "0" + s
 
         # Declare milliseconds
-        ms = round(ms / 100)
         ms = str(ms)
         if len(ms) < 2:
             ms = "0" + ms
@@ -477,8 +482,9 @@ class App:
     def collision_handling(self, collision_list, counter_of_loses, current_time, start_time):
         for i in collision_list:
             if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
-                self.player.x = self.player_x * 50 - 30 + (self.display_width - self.maze_width * 50) / 2    # Back to start location
-                self.player.y = self.player_y * 50 - 30 + (self.display_height - self.maze_height * 50) / 2   # Back to start location
+                # Back to start location \/
+                self.player.x = self.player_x * 50 - 30 + (self.display_width - self.maze_width * 50) / 2
+                self.player.y = self.player_y * 50 - 30 + (self.display_height - self.maze_height * 50) / 2
                 time.sleep(0.4)
                 counter_of_loses += 1
                 current_time = pygame.time.get_ticks()
@@ -519,7 +525,7 @@ class App:
             exit()
         return current_time, start_time
 
-    def finish_handling(self, counter_of_loses, current_time, level2, level3, level4, level5, level6, milliseconds,
+    def finish_handling(self, counter_of_loses, current_time, milliseconds,
                         new_record_list, record_list, start_time):
         if self.player.x <= 0 + (self.display_width - self.maze_width * 50) / 2 \
                 or self.player.x >= self.maze_width * 50 - 10 + (self.display_width - self.maze_width * 50) / 2 \
@@ -530,7 +536,7 @@ class App:
                             f"Tries no. {str(counter_of_loses + 1)}")
             time.sleep(0.4)
             # Open new level
-            self.open_new_level(current_time, level2, level3, level4, level5, level6, milliseconds, new_record_list,
+            self.open_new_level(current_time, milliseconds, new_record_list,
                                 record_list)
 
     def render_display(self, counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time):
@@ -543,7 +549,8 @@ class App:
         pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
         pygame.display.flip()
 
-    def open_new_level(self, current_time, level2, level3, level4, level5, level6, milliseconds, new_record_list, record_list):
+    def open_new_level(self, current_time, milliseconds, new_record_list, record_list):
+        level2, level3, level4, level5, level6 = MazeCreator.define_levels(if_level1=False)
         if self.next_level == 2:
             new_record_list.append(milliseconds - current_time)
             level2.on_execute(current_time, record_list, new_record_list)
@@ -563,7 +570,7 @@ class App:
             new_record_list.append(milliseconds - current_time)
             self.save_records(new_record_list)
             print("You win, congratulations!")
-            start.menu("")
+            start.menu_when_login("")
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):
@@ -577,9 +584,6 @@ class App:
         fps = 120
         start_time = 0
 
-        # DEFINE LEVELS
-        level2, level3, level4, level5, level6 = MazeCreator.define_levels(False)
-
         while True:
 
             milliseconds = pygame.time.get_ticks()  # get current program time
@@ -589,8 +593,7 @@ class App:
 
             current_time, start_time = self.events_handling(current_time, start_time, new_record_list)
 
-            self.finish_handling(counter_of_loses, current_time, level2, level3, level4, level5, level6,
-                                 milliseconds, new_record_list, record_list, start_time)
+            self.finish_handling(counter_of_loses, current_time, milliseconds, new_record_list, record_list, start_time)
 
             self.render_display(counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time)
 

@@ -172,7 +172,25 @@ class Menu:
         menu.mainloop(self.display)
 
     def global_records(self):
-        pass
+        conn = sqlite3.connect('records.db')
+        c = conn.cursor()
+        c.execute(
+            f"""
+                            SELECT MIN(level1), MIN(level2), MIN(level3), MIN(level4), MIN(level5), MIN(level6) FROM records
+                            """)
+        old_record_list = c.fetchall()
+        record_string = ""
+        for index, i in enumerate(old_record_list[0]):
+            record_string += f"level{index+1}: {App.to_time(i, 0, 1)}\n"
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='My records',
+                                width=1000)
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+
+        menu.add.button('Back', self.records)
+        menu.mainloop(self.display)
+
 
     def apply_register(self):
         conn = sqlite3.connect('accounts.db')

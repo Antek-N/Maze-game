@@ -316,7 +316,7 @@ class MazeCreator:
 
     @staticmethod
     def define_levels(if_level1):
-        level1 = App(2, 2, 2, (0, 35, 35), 16, 12, (150, 0, 0),
+        level1 = App(2, 2, 2, (35, 35, 35), 16, 12, (150, 0, 0),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
                       1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
@@ -539,9 +539,9 @@ class App:
             self.open_new_level(current_time, milliseconds, new_record_list,
                                 record_list)
 
-    def render_display(self, counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time):
-        timer = font_obj.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
-        loses_counter = font_obj.render(f"Loses: {str(counter_of_loses)}", True, font_color)
+    def render_display(self, counter_of_loses, current_time, font_color, font_type, milliseconds, start_time):
+        timer = font_type.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
+        loses_counter = font_type.render(f"Loses: {str(counter_of_loses)}", True, font_color)
         self.display.fill(self.background_color)  # Drawing display
         self.maze.draw(self.display, self.maze_color)  # Drawing maze
         self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
@@ -576,10 +576,10 @@ class App:
     def on_execute(self, current_time, record_list, new_record_list):
 
         counter_of_loses = 0
-        collision_list = self.maze.collisions()
-        font_color = (0, 0, 0)  # Set color of text
+        collision_list = self.maze.collisions()  # Set color of text
         self.create_display()
-        font_obj = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
+        font_type = pygame.font.Font(r"C:\Windows\Fonts\segoeprb.ttf", 30)  # Set font type
+        font_color = (255 - self.background_color[0], 255 - self.background_color[1], 255 - self.background_color[2])
         clock = pygame.time.Clock()
         fps = 120
         start_time = 0
@@ -595,7 +595,7 @@ class App:
 
             self.finish_handling(counter_of_loses, current_time, milliseconds, new_record_list, record_list, start_time)
 
-            self.render_display(counter_of_loses, current_time, font_color, font_obj, milliseconds, start_time)
+            self.render_display(counter_of_loses, current_time, font_color, font_type, milliseconds, start_time)
 
             clock.tick(fps)
 

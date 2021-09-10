@@ -141,6 +141,18 @@ class Menu:
         menu.add.button('Back', self.menu)
         menu.mainloop(self.display)
 
+    def result_board(self, new_record_list):
+        record_string = ""
+        for index, i in enumerate(new_record_list):
+            record_string += f"level{index+1}: {App.to_time(i, 0, 1)}\n"
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Welcome to DotMaze project!',
+                                width=1000)
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        menu.add.button('Continue', self.menu_when_login)
+        menu.mainloop(self.display)
+
     def records(self):
 
         menu = pygame_menu.Menu(height=320,
@@ -521,8 +533,7 @@ class App:
                 start_time = 1
         if keys[K_ESCAPE]:
             self.save_records(new_record_list)
-            pygame.quit()
-            exit()
+            start.result_board(new_record_list)
         return current_time, start_time
 
     def finish_handling(self, counter_of_loses, current_time, milliseconds,
@@ -570,7 +581,7 @@ class App:
             new_record_list.append(milliseconds - current_time)
             self.save_records(new_record_list)
             print("You win, congratulations!")
-            start.menu_when_login("")
+            start.result_board(new_record_list)
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list):

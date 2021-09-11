@@ -1,7 +1,3 @@
-# DotMaze project
-# 08.09.2021
-# Antek-N
-
 from pygame.locals import *
 import pygame
 from sys import exit
@@ -18,8 +14,8 @@ class Player:
         display_height -= maze_height * 50
         display_width /= 2
         display_height /= 2
-        self.x = x * 50 - 30 + display_width  # x start location
-        self.y = y * 50 - 30 + display_height  # y start location
+        self.x = x - 30 + display_width  # x start location
+        self.y = y - 30 + display_height  # y start location
         self.speed_of_movement = 2.5
 
     # Control settings
@@ -151,6 +147,39 @@ class Menu:
                                 width=1000)
         menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
         menu.add.button('Continue', self.menu_when_login)
+        menu.mainloop(self.display)
+
+    def start(self, milliseconds, x_player, y_player, maze_width, maze_height):
+        display_resolution = pygame.display.Info()
+        display_width, display_height = display_resolution.current_w, display_resolution.current_h
+        display_width -= maze_width * 50
+        display_height -= maze_height * 50
+        display_width /= 2
+        display_height /= 2
+        x_player = x_player + 30 - display_width
+        y_player = y_player + 30 - display_height
+        print(f"{milliseconds}, {x_player}, {y_player}")
+        App(2, x_player, y_player, (35, 35, 35), 16, 12, (150, 0, 0),
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+             1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+             1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+             1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+             1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+             1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+             1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
+             1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+             1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+             1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
+             1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
+             1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]).on_execute(milliseconds, [], [])
+
+    def pause(self, milliseconds, x_player, y_player, maze_width, maze_height):
+        menu = pygame_menu.Menu(height=320,
+                                theme=pygame_menu.themes.THEME_DARK,
+                                title='Welcome to DotMaze project!',
+                                width=1000)
+        menu.add.button('Continue', self.start, milliseconds, x_player, y_player, maze_width, maze_height)
+        menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 
     def records(self):
@@ -328,7 +357,7 @@ class MazeCreator:
 
     @staticmethod
     def define_levels(if_level1):
-        level1 = App(2, 2, 2, (35, 35, 35), 16, 12, (150, 0, 0),
+        level1 = App(2, 2*50, 2*50, (35, 35, 35), 16, 12, (150, 0, 0),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
                       1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1,
@@ -341,7 +370,7 @@ class MazeCreator:
                       1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
                       1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
                       1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1])
-        level2 = App(3, 15, 9, (20, 70, 20), 16, 15, (70, 70, 70),
+        level2 = App(3, 15*50, 9*50, (20, 70, 20), 16, 15, (70, 70, 70),
                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
                       1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1,
@@ -495,15 +524,15 @@ class App:
         for i in collision_list:
             if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
                 # Back to start location \/
-                self.player.x = self.player_x * 50 - 30 + (self.display_width - self.maze_width * 50) / 2
-                self.player.y = self.player_y * 50 - 30 + (self.display_height - self.maze_height * 50) / 2
+                self.player.x = self.player_x - 30 + (self.display_width - self.maze_width * 50) / 2
+                self.player.y = self.player_y - 30 + (self.display_height - self.maze_height * 50) / 2
                 time.sleep(0.4)
                 counter_of_loses += 1
                 current_time = pygame.time.get_ticks()
                 start_time = 0
         return counter_of_loses, current_time, start_time
 
-    def events_handling(self, current_time, start_time, new_record_list):
+    def events_handling(self, current_time, start_time, new_record_list, milliseconds):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.save_records(new_record_list)
@@ -533,7 +562,7 @@ class App:
                 start_time = 1
         if keys[K_ESCAPE]:
             self.save_records(new_record_list)
-            start.result_board(new_record_list)
+            start.pause(milliseconds, self.player.x, self.player.y, self.maze_width, self.maze_height)
         return current_time, start_time
 
     def finish_handling(self, counter_of_loses, current_time, milliseconds,
@@ -602,7 +631,7 @@ class App:
             counter_of_loses, current_time, start_time = self.collision_handling(collision_list, counter_of_loses,
                                                                                  current_time, start_time)
 
-            current_time, start_time = self.events_handling(current_time, start_time, new_record_list)
+            current_time, start_time = self.events_handling(current_time, start_time, new_record_list, milliseconds)
 
             self.finish_handling(counter_of_loses, current_time, milliseconds, new_record_list, record_list, start_time)
 

@@ -2,7 +2,7 @@ import pygame
 import pygame_menu
 import sqlite3
 import main
-import MazeCreator
+import scripts.MazeCreator as MazeCreator
 
 
 class Menu:
@@ -64,7 +64,7 @@ class Menu:
         menu.mainloop(self.display)
 
     def apply_login(self):
-        conn = sqlite3.connect('accounts.db')
+        conn = sqlite3.connect('databases/accounts.db')
         c = conn.cursor()
         c.execute(
             """
@@ -166,7 +166,7 @@ class Menu:
         menu.mainloop(self.display)
 
     def my_records(self):
-        conn = sqlite3.connect('records.db')
+        conn = sqlite3.connect('databases/records.db')
         c = conn.cursor()
         c.execute(
             f"""
@@ -186,7 +186,7 @@ class Menu:
         menu.mainloop(self.display)
 
     def global_records(self):
-        conn = sqlite3.connect('records.db')
+        conn = sqlite3.connect('databases/records.db')
         c = conn.cursor()
         c.execute(
             f"""
@@ -211,7 +211,7 @@ class Menu:
         menu.mainloop(self.display)
 
     def apply_register(self):
-        conn = sqlite3.connect('accounts.db')
+        conn = sqlite3.connect('databases/accounts.db')
         c = conn.cursor()
         c.execute(
             """
@@ -232,13 +232,13 @@ class Menu:
         if nick in new_nick_list:
             self.register("Nick is in usage")
 
-        conn = sqlite3.connect('accounts.db')
+        conn = sqlite3.connect('databases/accounts.db')
         c = conn.cursor()
         c.execute(f'INSERT INTO accounts VALUES ("{nick}", "{password}")')
         conn.commit()
         conn.close()
 
-        conn = sqlite3.connect('records.db')
+        conn = sqlite3.connect('databases/records.db')
         c = conn.cursor()
         c.execute(
             f"""

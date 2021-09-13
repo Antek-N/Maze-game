@@ -3,9 +3,9 @@ import pygame
 from sys import exit
 import time
 import sqlite3
-import Player
-import Menu
-import MazeCreator
+import scripts.Player as Player
+import scripts.Menu as Menu
+import scripts.MazeCreator as MazeCreator
 
 
 class App:
@@ -33,7 +33,7 @@ class App:
     @staticmethod
     def save_records(new_record_list):
         # database start
-        conn = sqlite3.connect('records.db')
+        conn = sqlite3.connect('databases/records.db')
         c = conn.cursor()
         c.execute(
             f"""
@@ -127,15 +127,12 @@ class App:
             Menu.Menu.pause(Menu.Menu(), milliseconds, self.player.x, self.player.y, self.maze_width, self.maze_height, self.next_level-1)
         return current_time, start_time
 
-    def finish_handling(self, counter_of_loses, current_time, milliseconds,
-                        new_record_list, record_list, start_time):
+    def finish_handling(self, current_time, milliseconds,
+                        new_record_list, record_list):
         if self.player.x <= 0 + (self.display_width - self.maze_width * 50) / 2 \
                 or self.player.x >= self.maze_width * 50 - 10 + (self.display_width - self.maze_width * 50) / 2 \
                 or self.player.y >= self.maze_height * 50 - 10 + (self.display_height - self.maze_height * 50) / 2 \
                 or self.player.y <= 0 + (self.display_height - self.maze_height * 50) / 2:
-            data_file = open(r"data.txt", "a+")
-            data_file.write(f"\n\n{time.asctime()}:\n{App.to_time(milliseconds, current_time, start_time)} - "
-                            f"Tries no. {str(counter_of_loses + 1)}")
             time.sleep(0.4)
             # Open new level
             self.open_new_level(current_time, milliseconds, new_record_list,
@@ -194,7 +191,7 @@ class App:
 
             current_time, start_time = self.events_handling(current_time, start_time, new_record_list, milliseconds)
 
-            self.finish_handling(counter_of_loses, current_time, milliseconds, new_record_list, record_list, start_time)
+            self.finish_handling(current_time, milliseconds, new_record_list, record_list)
 
             self.render_display(counter_of_loses, current_time, font_color, font_type, milliseconds, start_time)
 

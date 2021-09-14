@@ -10,9 +10,7 @@ import scripts.MazeCreator as MazeCreator
 
 class App:
 
-    def __init__(self, next_level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze, current_x, current_y):
-        self.current_x = current_x
-        self.current_y = current_y
+    def __init__(self, next_level, player_x, player_y, background_color, maze_width, maze_height, maze_color, maze):
         self.next_level = next_level
         self.player_x = player_x  # player start position (x)
         self.player_y = player_y  # player start position (y)
@@ -22,7 +20,7 @@ class App:
         self.maze_color = maze_color
         self.maze = MazeCreator.MazeCreator(maze_width, maze_height, maze)
         self.display = None
-        self.player = Player.Player(current_x, current_y, self.maze_width, self.maze_height)
+        self.player = Player.Player(player_x, player_y, self.maze_width, self.maze_height)
         display_resolution = pygame.display.Info()
         self.display_width, self.display_height = display_resolution.current_w, display_resolution.current_h
 
@@ -94,7 +92,7 @@ class App:
                 start_time = 0
         return counter_of_loses, current_time, start_time
 
-    def events_handling(self, current_time, start_time, new_record_list, milliseconds):
+    def events_handling(self, current_time, start_time, new_record_list, record_list):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.save_records(new_record_list)
@@ -124,7 +122,7 @@ class App:
                 start_time = 1
         if keys[K_ESCAPE]:
             self.save_records(new_record_list)
-            Menu.Menu.pause(Menu.Menu(), milliseconds, self.player.x, self.player.y, self.maze_width, self.maze_height, self.next_level-1)
+            Menu.Menu.pause(Menu.Menu(), self.next_level-1, record_list, new_record_list)
         return current_time, start_time
 
     def finish_handling(self, current_time, milliseconds,
@@ -171,7 +169,7 @@ class App:
             Menu.Menu.result_board(Menu.Menu(), new_record_list)
 
     # MAIN PART
-    def on_execute(self, current_time, record_list, new_record_list):
+    def on_execute(self, current_time, record_list, new_record_list, start_time=0):
 
         counter_of_loses = 0
         collision_list = self.maze.collisions()  # Set color of text
@@ -180,7 +178,6 @@ class App:
         font_color = (255 - self.background_color[0], 255 - self.background_color[1], 255 - self.background_color[2])
         clock = pygame.time.Clock()
         fps = 120
-        start_time = 0
 
         while True:
 
@@ -189,7 +186,7 @@ class App:
             counter_of_loses, current_time, start_time = self.collision_handling(collision_list, counter_of_loses,
                                                                                  current_time, start_time)
 
-            current_time, start_time = self.events_handling(current_time, start_time, new_record_list, milliseconds)
+            current_time, start_time = self.events_handling(current_time, start_time, new_record_list, record_list)
 
             self.finish_handling(current_time, milliseconds, new_record_list, record_list)
 
@@ -198,7 +195,7 @@ class App:
             clock.tick(fps)
 
 
-# Start program\
+# Start program
 if __name__ == "__main__":
     pygame.init()
     start = Menu.Menu()

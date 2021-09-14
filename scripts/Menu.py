@@ -122,35 +122,27 @@ class Menu:
         menu.mainloop(self.display)
 
     @staticmethod
-    def start(milliseconds, x_player, y_player, maze_width, maze_height, level):
-        display_resolution = pygame.display.Info()
-        display_width, display_height = display_resolution.current_w, display_resolution.current_h
-        display_width -= maze_width * 50
-        display_height -= maze_height * 50
-        display_width /= 2
-        display_height /= 2
-        x_player = x_player + 30 - display_width
-        y_player = y_player + 30 - display_height
-        print(f"{milliseconds}, {x_player}, {y_player}")
+    def start(level, record_list, new_record_list):
         if level == 1:
-            MazeCreator.MazeCreator.level1(current_x=x_player, current_y=y_player).on_execute(milliseconds, [], [])
+            MazeCreator.MazeCreator.level1().on_execute(0, record_list, new_record_list)
         elif level == 2:
-            MazeCreator.MazeCreator.level2(current_x=x_player, current_y=y_player).on_execute(milliseconds, [], [])
+            MazeCreator.MazeCreator.level2().on_execute(0, record_list, new_record_list)
         elif level == 3:
-            MazeCreator.MazeCreator.level3(current_x=x_player, current_y=y_player).on_execute(milliseconds, [], [])
+            MazeCreator.MazeCreator.level3().on_execute(0, record_list, new_record_list)
         elif level == 4:
-            MazeCreator.MazeCreator.level4(current_x=x_player, current_y=y_player).on_execute(milliseconds, [], [])
+            MazeCreator.MazeCreator.level4().on_execute(0, record_list, new_record_list)
         elif level == 5:
-            MazeCreator.MazeCreator.level5(current_x=x_player, current_y=y_player).on_execute(milliseconds, [], [])
+            MazeCreator.MazeCreator.level5().on_execute(0, record_list, new_record_list)
         elif level == 6:
-            MazeCreator.MazeCreator.level6(current_x=x_player, current_y=y_player).on_execute(milliseconds, [], [])
+            MazeCreator.MazeCreator.level6().on_execute(0, record_list, new_record_list)
 
-    def pause(self, milliseconds, x_player, y_player, maze_width, maze_height, level):
+    def pause(self, level, record_list, new_record_list):
         menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
                                 title='Welcome to DotMaze project!',
                                 width=1000)
-        menu.add.button('Continue', self.start, milliseconds, x_player, y_player, maze_width, maze_height, level)
+        menu.add.button('Continue', self.start, level, record_list, new_record_list)
+        menu.add.button('Back to menu', self.menu_when_login)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 

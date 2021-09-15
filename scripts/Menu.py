@@ -50,15 +50,21 @@ class Menu:
     def start_the_game():
         MazeCreator.MazeCreator.level1().on_execute(0, [], [])
 
-    def menu_when_login(self):
+    @staticmethod
+    def nick():
+        return nick
+
+    def menu(self, text=""):
         menu = pygame_menu.Menu(height=self.display_height,
                                 theme=self.mytheme,
                                 title='Welcome to DotMaze project!',
                                 width=self.display_width)
-        menu.add.button('Play', self.start_the_game)
-        menu.add.button('Records', self.records)
-        menu.add.button('Help', self.help)
-        menu.add.button('Log out', self.menu)
+        global nick
+        nick = ""
+        text = text
+        menu.add.label(text, max_char=-1, font_size=15, font_color=(0, 0, 0))
+        menu.add.button('Sign in', self.login)
+        menu.add.button('Sign up', self.register)
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 
@@ -125,44 +131,54 @@ class Menu:
         menu.add.button('Back', self.menu)
         menu.mainloop(self.display)
 
-    def result_board(self, new_record_list):
-        main.App.save_records(new_record_list)
-        record_string = ""
-        for index, i in enumerate(new_record_list):
-            record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}\n"
+    def apply_register(self):
+        conn = sqlite3.connect('databases/accounts.db')
+        c = conn.cursor()
+        c.execute(
+            """
+            SELECT nick FROM accounts
+            """)
+        nick_list = c.fetchall()
+        conn.commit()
+        conn.close()
+        # database end
+        new_nick_list = []
+        for i in nick_list:
+            for a in i:
+                new_nick_list.append(a)
+        if not nick:
+            self.register("Nick is required")
+        if not password:
+            self.register("Password is required")
+        if nick in new_nick_list:
+            self.register("Nick is in usage")
+
+        conn = sqlite3.connect('databases/accounts.db')
+        c = conn.cursor()
+        c.execute(f'INSERT INTO accounts VALUES ("{nick}", "{password}")')
+        conn.commit()
+        conn.close()
+
+        conn = sqlite3.connect('databases/records.db')
+        c = conn.cursor()
+        c.execute(
+            f"""
+            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999)
+            """)
+        conn.commit()
+        conn.close()
+        self.menu("You may login")
+
+    def menu_when_login(self):
         menu = pygame_menu.Menu(height=self.display_height,
                                 theme=self.mytheme,
-                                title='Result board',
+                                title='Welcome to DotMaze project!',
                                 width=self.display_width)
-        if record_string:
-            menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
-        else:
-            menu.add.label("You have no results\n", max_char=-1, font_size=25, font_color=(255, 0, 0))
-        menu.add.button('Continue', self.menu_when_login)
-        menu.mainloop(self.display)
-
-    @staticmethod
-    def start(level, record_list, new_record_list):
-        if level == 1:
-            MazeCreator.MazeCreator.level1().on_execute(0, record_list, new_record_list)
-        elif level == 2:
-            MazeCreator.MazeCreator.level2().on_execute(0, record_list, new_record_list)
-        elif level == 3:
-            MazeCreator.MazeCreator.level3().on_execute(0, record_list, new_record_list)
-        elif level == 4:
-            MazeCreator.MazeCreator.level4().on_execute(0, record_list, new_record_list)
-        elif level == 5:
-            MazeCreator.MazeCreator.level5().on_execute(0, record_list, new_record_list)
-        elif level == 6:
-            MazeCreator.MazeCreator.level6().on_execute(0, record_list, new_record_list)
-
-    def pause(self, level, record_list, new_record_list):
-        menu = pygame_menu.Menu(height=self.display_height,
-                                theme=self.mytheme,
-                                title='Pause',
-                                width=self.display_width)
-        menu.add.button('Play again', self.start, level, record_list, new_record_list)
-        menu.add.button('Back to menu', self.result_board, new_record_list)
+        menu.add.button('Play', self.start_the_game)
+        menu.add.button('Records', self.records)
+        menu.add.button('Help', self.help)
+        menu.add.button('Log out', self.menu)
+        menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.display)
 
     def records(self):
@@ -221,44 +237,6 @@ class Menu:
         menu.add.button('Back', self.records)
         menu.mainloop(self.display)
 
-    def apply_register(self):
-        conn = sqlite3.connect('databases/accounts.db')
-        c = conn.cursor()
-        c.execute(
-            """
-            SELECT nick FROM accounts
-            """)
-        nick_list = c.fetchall()
-        conn.commit()
-        conn.close()
-        # database end
-        new_nick_list = []
-        for i in nick_list:
-            for a in i:
-                new_nick_list.append(a)
-        if not nick:
-            self.register("Nick is required")
-        if not password:
-            self.register("Password is required")
-        if nick in new_nick_list:
-            self.register("Nick is in usage")
-
-        conn = sqlite3.connect('databases/accounts.db')
-        c = conn.cursor()
-        c.execute(f'INSERT INTO accounts VALUES ("{nick}", "{password}")')
-        conn.commit()
-        conn.close()
-
-        conn = sqlite3.connect('databases/records.db')
-        c = conn.cursor()
-        c.execute(
-            f"""
-            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999)
-            """)
-        conn.commit()
-        conn.close()
-        self.menu("You may login")
-
     def help(self):
         help_message = """1. To control use arrows or WSAD
         """
@@ -270,20 +248,42 @@ class Menu:
         menu.add.button('Back', self.menu_when_login)
         menu.mainloop(self.display)
 
-    def menu(self, text=""):
+    @staticmethod
+    def start(level, record_list, new_record_list):
+        if level == 1:
+            MazeCreator.MazeCreator.level1().on_execute(0, record_list, new_record_list)
+        elif level == 2:
+            MazeCreator.MazeCreator.level2().on_execute(0, record_list, new_record_list)
+        elif level == 3:
+            MazeCreator.MazeCreator.level3().on_execute(0, record_list, new_record_list)
+        elif level == 4:
+            MazeCreator.MazeCreator.level4().on_execute(0, record_list, new_record_list)
+        elif level == 5:
+            MazeCreator.MazeCreator.level5().on_execute(0, record_list, new_record_list)
+        elif level == 6:
+            MazeCreator.MazeCreator.level6().on_execute(0, record_list, new_record_list)
+
+    def pause(self, level, record_list, new_record_list):
         menu = pygame_menu.Menu(height=self.display_height,
                                 theme=self.mytheme,
-                                title='Welcome to DotMaze project!',
+                                title='Pause',
                                 width=self.display_width)
-        global nick
-        nick = ""
-        text = text
-        menu.add.label(text, max_char=-1, font_size=15, font_color=(0, 0, 0))
-        menu.add.button('Sign in', self.login)
-        menu.add.button('Sign up', self.register)
-        menu.add.button('Quit', pygame_menu.events.EXIT)
+        menu.add.button('Play again', self.start, level, record_list, new_record_list)
+        menu.add.button('Back to menu', self.result_board, new_record_list)
         menu.mainloop(self.display)
 
-    @staticmethod
-    def nick():
-        return nick
+    def result_board(self, new_record_list):
+        main.App.save_records(new_record_list)
+        record_string = ""
+        for index, i in enumerate(new_record_list):
+            record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}\n"
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
+                                title='Result board',
+                                width=self.display_width)
+        if record_string:
+            menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
+        else:
+            menu.add.label("You have no results\n", max_char=-1, font_size=25, font_color=(255, 0, 0))
+        menu.add.button('Continue', self.menu_when_login)
+        menu.mainloop(self.display)

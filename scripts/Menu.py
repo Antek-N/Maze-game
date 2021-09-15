@@ -23,7 +23,12 @@ class Menu:
                                          title_background_color=(0, 0, 0),
                                          title_font_shadow=True,
                                          widget_padding=25,
-                                         title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE)
+                                         title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE,
+                                         cursor_color=(200, 0, 0),
+                                         selection_color=(140, 0, 0),
+                                         widget_font_color=(0, 0, 0),
+
+                                         )
 
     @staticmethod
     def check_nick(value):
@@ -45,13 +50,11 @@ class Menu:
     def start_the_game():
         MazeCreator.MazeCreator.level1().on_execute(0, [], [])
 
-    def menu_when_login(self, text=""):
+    def menu_when_login(self):
         menu = pygame_menu.Menu(height=self.display_height,
                                 theme=self.mytheme,
                                 title='Welcome to DotMaze project!',
                                 width=self.display_width)
-        text = text
-        menu.add.label(text, max_char=-1, font_size=15, font_color=(255, 255, 255))
         menu.add.button('Play', self.start_the_game)
         menu.add.button('Records', self.records)
         menu.add.button('Help', self.help)
@@ -132,7 +135,7 @@ class Menu:
                                 title='Result board',
                                 width=self.display_width)
         if record_string:
-            menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+            menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
         else:
             menu.add.label("You have no results\n", max_char=-1, font_size=25, font_color=(255, 0, 0))
         menu.add.button('Continue', self.menu_when_login)
@@ -189,7 +192,7 @@ class Menu:
                                 theme=self.mytheme,
                                 title='My records',
                                 width=self.display_width)
-        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
         menu.add.button('Back', self.records)
         menu.mainloop(self.display)
 
@@ -213,7 +216,7 @@ class Menu:
                                 theme=self.mytheme,
                                 title='My records',
                                 width=self.display_width)
-        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
 
         menu.add.button('Back', self.records)
         menu.mainloop(self.display)
@@ -263,7 +266,7 @@ class Menu:
                                 theme=self.mytheme,
                                 title='Help',
                                 width=self.display_width)
-        menu.add.label(help_message, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        menu.add.label(help_message, max_char=-1, font_size=25, font_color=(0, 0, 0))
         menu.add.button('Back', self.menu_when_login)
         menu.mainloop(self.display)
 
@@ -275,7 +278,7 @@ class Menu:
         global nick
         nick = ""
         text = text
-        menu.add.label(text, max_char=-1, font_size=15, font_color=(255, 255, 255))
+        menu.add.label(text, max_char=-1, font_size=15, font_color=(0, 0, 0))
         menu.add.button('Sign in', self.login)
         menu.add.button('Sign up', self.register)
         menu.add.button('Quit', pygame_menu.events.EXIT)

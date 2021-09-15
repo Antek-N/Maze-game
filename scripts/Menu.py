@@ -13,6 +13,17 @@ class Menu:
         self.display = pygame.display.set_mode((width, height))
         pygame.display.set_caption("DotGame")  # Set title
         pygame.display.set_icon(pygame.image.load(r'img\icon.png'))
+        display_resolution = pygame.display.Info()
+        self.display_width, self.display_height = display_resolution.current_w, display_resolution.current_h
+        myimage = pygame_menu.baseimage.BaseImage(
+            image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_WALLPAPER,
+            drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL,
+            drawing_offset=(0, 0))
+        self.mytheme = pygame_menu.Theme(background_color=myimage,  # transparent background
+                                         title_background_color=(0, 0, 0),
+                                         title_font_shadow=True,
+                                         widget_padding=25,
+                                         title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE)
 
     @staticmethod
     def check_nick(value):
@@ -35,10 +46,10 @@ class Menu:
         MazeCreator.MazeCreator.level1().on_execute(0, [], [])
 
     def menu_when_login(self, text=""):
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Welcome to DotMaze project!',
-                                width=1000)
+                                width=self.display_width)
         text = text
         menu.add.label(text, max_char=-1, font_size=15, font_color=(255, 255, 255))
         menu.add.button('Play', self.start_the_game)
@@ -52,10 +63,10 @@ class Menu:
         global nick, password
         password = ""
         nick = ""
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Sign in',
-                                width=1000)
+                                width=self.display_width)
         menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
         menu.add.text_input('nick: ', default="", onchange=self.check_nick, maxchar=16)
         menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
@@ -94,16 +105,18 @@ class Menu:
         self.menu_when_login()
 
     def register(self, text=""):
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Sign up',
-                                width=1000)
+                                width=self.display_width)
         global nick, password
         password = ""
         nick = ""
         text = text
         menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
         menu.add.text_input('nick: ', default="", onchange=self.check_nick, maxchar=16)
+        menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
         menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
         menu.add.button('Continue', self.apply_register)
         menu.add.button('Back', self.menu)
@@ -114,10 +127,10 @@ class Menu:
         record_string = ""
         for index, i in enumerate(new_record_list):
             record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}\n"
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Result board',
-                                width=1000)
+                                width=self.display_width)
         if record_string:
             menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
         else:
@@ -141,20 +154,20 @@ class Menu:
             MazeCreator.MazeCreator.level6().on_execute(0, record_list, new_record_list)
 
     def pause(self, level, record_list, new_record_list):
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Pause',
-                                width=1000)
+                                width=self.display_width)
         menu.add.button('Play again', self.start, level, record_list, new_record_list)
         menu.add.button('Back to menu', self.result_board, new_record_list)
         menu.mainloop(self.display)
 
     def records(self):
 
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Records',
-                                width=1000)
+                                width=self.display_width)
         menu.add.button('My records', self.my_records)
         menu.add.button('Global records', self.global_records)
         menu.add.button('Back', self.menu_when_login)
@@ -172,10 +185,10 @@ class Menu:
         for index, i in enumerate(old_record_list[0][1:]):
             record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}\n"
 
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='My records',
-                                width=1000)
+                                width=self.display_width)
         menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
         menu.add.button('Back', self.records)
         menu.mainloop(self.display)
@@ -196,10 +209,10 @@ class Menu:
         record_string = ""
         for index, i in enumerate(old_record_list[0]):
             record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}\n"
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='My records',
-                                width=1000)
+                                width=self.display_width)
         menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
 
         menu.add.button('Back', self.records)
@@ -246,19 +259,19 @@ class Menu:
     def help(self):
         help_message = """1. To control use arrows or WSAD
         """
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Help',
-                                width=1000)
+                                width=self.display_width)
         menu.add.label(help_message, max_char=-1, font_size=25, font_color=(255, 255, 255))
         menu.add.button('Back', self.menu_when_login)
         menu.mainloop(self.display)
 
     def menu(self, text=""):
-        menu = pygame_menu.Menu(height=320,
-                                theme=pygame_menu.themes.THEME_DARK,
+        menu = pygame_menu.Menu(height=self.display_height,
+                                theme=self.mytheme,
                                 title='Welcome to DotMaze project!',
-                                width=1000)
+                                width=self.display_width)
         global nick
         nick = ""
         text = text

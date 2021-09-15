@@ -110,14 +110,18 @@ class Menu:
         menu.mainloop(self.display)
 
     def result_board(self, new_record_list):
+        main.App.save_records(new_record_list)
         record_string = ""
         for index, i in enumerate(new_record_list):
             record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}\n"
         menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
-                                title='Welcome to DotMaze project!',
+                                title='Result board',
                                 width=1000)
-        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        if record_string:
+            menu.add.label(record_string, max_char=-1, font_size=25, font_color=(255, 255, 255))
+        else:
+            menu.add.label("You have no results\n", max_char=-1, font_size=25, font_color=(255, 0, 0))
         menu.add.button('Continue', self.menu_when_login)
         menu.mainloop(self.display)
 
@@ -139,11 +143,10 @@ class Menu:
     def pause(self, level, record_list, new_record_list):
         menu = pygame_menu.Menu(height=320,
                                 theme=pygame_menu.themes.THEME_DARK,
-                                title='Welcome to DotMaze project!',
+                                title='Pause',
                                 width=1000)
-        menu.add.button('Continue', self.start, level, record_list, new_record_list)
-        menu.add.button('Back to menu', self.menu_when_login)
-        menu.add.button('Quit', pygame_menu.events.EXIT)
+        menu.add.button('Play again', self.start, level, record_list, new_record_list)
+        menu.add.button('Back to menu', self.result_board, new_record_list)
         menu.mainloop(self.display)
 
     def records(self):

@@ -164,8 +164,6 @@ class App:
             MazeCreator.MazeCreator.level6().on_execute(current_time, record_list, new_record_list)
         else:
             new_record_list.append(milliseconds - current_time)
-            self.save_records(new_record_list)
-            print("You win, congratulations!")
             Menu.Menu.result_board(Menu.Menu(), new_record_list)
 
     # MAIN PART

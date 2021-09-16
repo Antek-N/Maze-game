@@ -41,6 +41,11 @@ class Menu:
         password = value
 
     @staticmethod
+    def check_repeat_password(value):
+        global password_2
+        password_2 = value
+
+    @staticmethod
     def check_nickname(value):
         global nick
         nick = value
@@ -104,9 +109,9 @@ class Menu:
         db_password = c.fetchall()
 
         if not nick:
-            self.login("Nick is required")
+            self.login('Field "Nick" is required')
         if not password:
-            self.login("Password is required")
+            self.login('Field "Password" is required')
         if nick not in new_nick_list:
             self.login("Incorrect nick")
         if password != db_password[0][0]:
@@ -119,14 +124,15 @@ class Menu:
                                 theme=self.mytheme,
                                 title='Sign up',
                                 width=self.display_width)
-        global nick, password
+        global nick, password, password_2
         password = ""
         nick = ""
+        password_2 = ""
         text = text
         menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
         menu.add.text_input('nick: ', default="", onchange=self.check_nick, maxchar=16)
         menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
-        menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
+        menu.add.text_input('Repeat password: ', default="", onchange=self.check_repeat_password, maxchar=32, password=True)
         menu.add.button('Continue', self.apply_register)
         menu.add.button('Back', self.menu)
         menu.mainloop(self.display)
@@ -147,11 +153,15 @@ class Menu:
             for a in i:
                 new_nick_list.append(a)
         if not nick:
-            self.register("Nick is required")
-        if not password:
-            self.register("Password is required")
+            self.register('Field "Nick" is required')
         if nick in new_nick_list:
             self.register("Nick is in usage")
+        if not password:
+            self.register('Field "Password" is required')
+        if not password_2:
+            self.register('Field "Repeat password" is required')
+        if password != password_2:
+            self.register("Password do not match")
 
         conn = sqlite3.connect('databases/accounts.db')
         c = conn.cursor()

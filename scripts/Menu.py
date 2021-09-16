@@ -132,7 +132,8 @@ class Menu:
         menu.add.label(text, max_char=-1, font_size=15, font_color=(200, 0, 0))
         menu.add.text_input('nick: ', default="", onchange=self.check_nick, maxchar=16)
         menu.add.text_input('Password: ', default="", onchange=self.check_password, maxchar=32, password=True)
-        menu.add.text_input('Repeat password: ', default="", onchange=self.check_repeat_password, maxchar=32, password=True)
+        menu.add.text_input('Repeat password: ', default="", onchange=self.check_repeat_password, maxchar=32,
+                            password=True)
         menu.add.button('Continue', self.apply_register)
         menu.add.button('Back', self.menu)
         menu.mainloop(self.display)

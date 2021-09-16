@@ -136,16 +136,6 @@ class App:
             self.open_new_level(current_time, milliseconds, new_record_list,
                                 record_list)
 
-    def render_display(self, counter_of_loses, current_time, font_color, font_type, milliseconds, start_time):
-        timer = font_type.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
-        loses_counter = font_type.render(f"Loses: {str(counter_of_loses)}", True, font_color)
-        self.display.fill(self.background_color)  # Drawing display
-        self.maze.draw(self.display, self.maze_color)  # Drawing maze
-        self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
-        self.display.blit(timer, (self.display_width - 275, 0))  # Drawing timer
-        pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
-        pygame.display.flip()
-
     def open_new_level(self, current_time, milliseconds, new_record_list, record_list):
         if self.next_level == 2:
             new_record_list.append(milliseconds - current_time)
@@ -165,6 +155,16 @@ class App:
         else:
             new_record_list.append(milliseconds - current_time)
             Menu.Menu.result_board(Menu.Menu(), new_record_list)
+
+    def render_display(self, counter_of_loses, current_time, font_color, font_type, milliseconds, start_time):
+        timer = font_type.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
+        loses_counter = font_type.render(f"Loses: {str(counter_of_loses)}", True, font_color)
+        self.display.fill(self.background_color)  # Drawing display
+        self.maze.draw(self.display, self.maze_color)  # Drawing maze
+        self.display.blit(loses_counter, (50, 0))  # Drawing counter of loses
+        self.display.blit(timer, (self.display_width - 275, 0))  # Drawing timer
+        pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
+        pygame.display.flip()
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list, start_time=0):

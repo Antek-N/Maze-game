@@ -174,7 +174,7 @@ class Menu:
         c = conn.cursor()
         c.execute(
             f"""
-            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999)
+            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 99999999)
             """)
         conn.commit()
         conn.close()
@@ -232,8 +232,9 @@ class Menu:
                             MIN(level2), 
                             MIN(level3), 
                             MIN(level4), 
-                            MIN(level5), 
-                            MIN(level6) FROM records
+                            MIN(level5),
+                            MIN(level6),
+                            MIN(level7) FROM records
                             """)
         old_record_list = c.fetchall()
         record_string = ""
@@ -273,6 +274,8 @@ class Menu:
             MazeCreator.MazeCreator.level5().on_execute(0, record_list, new_record_list)
         elif level == 6:
             MazeCreator.MazeCreator.level6().on_execute(0, record_list, new_record_list)
+        elif level == 7:
+            MazeCreator.MazeCreator.level7().on_execute(0, record_list, new_record_list)
 
     def pause(self, level, record_list, new_record_list):
         menu = pygame_menu.Menu(height=self.display_height,

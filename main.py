@@ -51,7 +51,8 @@ class App:
                                          level3 = {record_list[2]},
                                          level4 = {record_list[3]},
                                          level5 = {record_list[4]},
-                                         level6 = {record_list[5]} WHERE nick = '{Menu.Menu.nick()}';""")
+                                         level5 = {record_list[5]},
+                                         level6 = {record_list[6]} WHERE nick = '{Menu.Menu.nick()}';""")
         conn.commit()
         conn.close()
         # database end
@@ -152,6 +153,9 @@ class App:
         if self.next_level == 6:
             new_record_list.append(milliseconds - current_time)
             MazeCreator.MazeCreator.level6().on_execute(current_time, record_list, new_record_list)
+        if self.next_level == 7:
+            new_record_list.append(milliseconds - current_time)
+            MazeCreator.MazeCreator.level7().on_execute(current_time, record_list, new_record_list)
         else:
             new_record_list.append(milliseconds - current_time)
             Menu.Menu.result_board(Menu.Menu(), new_record_list)

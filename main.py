@@ -51,8 +51,8 @@ class App:
                                          level3 = {record_list[2]},
                                          level4 = {record_list[3]},
                                          level5 = {record_list[4]},
-                                         level5 = {record_list[5]},
-                                         level6 = {record_list[6]} WHERE nick = '{Menu.Menu.nick()}';""")
+                                         level6 = {record_list[5]},
+                                         level7 = {record_list[6]} WHERE nick = '{Menu.Menu.nick()}';""")
         conn.commit()
         conn.close()
         # database end

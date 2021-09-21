@@ -250,7 +250,9 @@ class Menu:
         menu.mainloop(self.display)
 
     def help(self):
-        help_message = """1. To control use arrows or WSAD
+        help_message = """
+        1. To control use arrows or WASD
+        2. To pause game, click ESC button
         """
         menu = pygame_menu.Menu(height=self.display_height,
                                 theme=self.mytheme,

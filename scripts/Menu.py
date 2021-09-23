@@ -16,7 +16,7 @@ class Menu:
         display_resolution = pygame.display.Info()
         self.display_width, self.display_height = display_resolution.current_w, display_resolution.current_h
         myimage = pygame_menu.baseimage.BaseImage(
-            image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_WALLPAPER,
+            image_path=r"img\theme.jpg",
             drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL,
             drawing_offset=(0, 0))
         self.mytheme = pygame_menu.Theme(background_color=myimage,  # transparent background

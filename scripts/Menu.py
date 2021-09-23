@@ -21,12 +21,13 @@ class Menu:
             drawing_offset=(0, 0))
         self.mytheme = pygame_menu.Theme(background_color=myimage,  # transparent background
                                          title_background_color=(0, 0, 0),
-                                         title_font_shadow=True,
+                                         title_font_color=(40, 40, 40),
+                                         title_font_shadow=False,
                                          widget_padding=25,
                                          title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE,
                                          cursor_color=(200, 0, 0),
                                          selection_color=(140, 0, 0),
-                                         widget_font_color=(0, 0, 0),
+                                         widget_font_color=(40, 40, 40),
 
                                          )
 
@@ -219,7 +220,7 @@ class Menu:
                                 theme=self.mytheme,
                                 title='My records',
                                 width=self.display_width)
-        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(40, 40, 40))
         menu.add.button('Back', self.records)
         menu.mainloop(self.display)
 
@@ -244,7 +245,7 @@ class Menu:
                                 theme=self.mytheme,
                                 title='My records',
                                 width=self.display_width)
-        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
+        menu.add.label(record_string, max_char=-1, font_size=25, font_color=(40, 40, 40))
 
         menu.add.button('Back', self.records)
         menu.mainloop(self.display)
@@ -258,7 +259,7 @@ class Menu:
                                 theme=self.mytheme,
                                 title='Help',
                                 width=self.display_width)
-        menu.add.label(help_message, max_char=-1, font_size=25, font_color=(0, 0, 0))
+        menu.add.label(help_message, max_char=-1, font_size=25, font_color=(40, 40, 40))
         menu.add.button('Back', self.menu_when_login)
         menu.mainloop(self.display)
 
@@ -298,7 +299,7 @@ class Menu:
                                 title='Result board',
                                 width=self.display_width)
         if record_string:
-            menu.add.label(record_string, max_char=-1, font_size=25, font_color=(0, 0, 0))
+            menu.add.label(record_string, max_char=-1, font_size=25, font_color=(40, 40, 40))
         else:
             menu.add.label("You have no results\n", max_char=-1, font_size=25, font_color=(255, 0, 0))
         menu.add.button('Continue', self.menu_when_login)

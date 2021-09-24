@@ -30,6 +30,7 @@ class App:
 
     @staticmethod
     def save_records(new_record_list):
+        is_new_record_list = []
         # database start
         conn = sqlite3.connect('databases/records.db')
         c = conn.cursor()
@@ -44,6 +45,9 @@ class App:
         for i in range(len(new_record_list)):
             if int(new_record_list[i]) < record_list[i]:
                 record_list[i] = int(new_record_list[i])
+                is_new_record_list.append("   NEW RECORD")
+            else:
+                is_new_record_list.append("")
 
         c.execute(f"""UPDATE records SET nick = '{Menu.Menu.nick()}',
                                          level1 = {record_list[0]},
@@ -56,6 +60,8 @@ class App:
         conn.commit()
         conn.close()
         # database end
+
+        return is_new_record_list
 
     # CONVERT MS TO M:SS:MS FORMAT
     @staticmethod
@@ -124,8 +130,9 @@ class App:
                 current_time = pygame.time.get_ticks()
                 start_time = 1
         if keys[K_ESCAPE]:
-            self.save_records(new_record_list)
-            Menu.Menu.pause(Menu.Menu(), self.next_level-1, record_list, new_record_list)
+            if_new_record_list = self.save_records(new_record_list)
+            print(if_new_record_list)
+            Menu.Menu.pause(Menu.Menu(), self.next_level-1, record_list, new_record_list, if_new_record_list)
         return current_time, start_time
 
     def render_display(self, counter_of_loses, current_time, font_color, font_type, milliseconds, start_time):

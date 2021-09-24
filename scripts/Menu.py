@@ -280,20 +280,20 @@ class Menu:
         elif level == 7:
             MazeCreator.MazeCreator.level7().on_execute(0, record_list, new_record_list)
 
-    def pause(self, level, record_list, new_record_list):
+    def pause(self, level, record_list, new_record_list, if_new_record_list):
         menu = pygame_menu.Menu(height=self.display_height,
                                 theme=self.mytheme,
                                 title='Pause',
                                 width=self.display_width)
         menu.add.button('Play again', self.start, level, record_list, new_record_list)
-        menu.add.button('Back to menu', self.result_board, new_record_list)
+        menu.add.button('Back to menu', self.result_board, new_record_list, if_new_record_list)
         menu.mainloop(self.display)
 
-    def result_board(self, new_record_list):
+    def result_board(self, new_record_list, if_new_record_list):
         main.App.save_records(new_record_list)
         record_string = ""
         for index, i in enumerate(new_record_list):
-            record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}\n"
+            record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}{if_new_record_list[index]}\n"
         menu = pygame_menu.Menu(height=self.display_height,
                                 theme=self.mytheme,
                                 title='Result board',

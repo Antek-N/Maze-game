@@ -28,7 +28,6 @@ class Menu:
                                          cursor_color=(200, 0, 0),
                                          selection_color=(140, 0, 0),
                                          widget_font_color=(40, 40, 40),
-
                                          )
 
     @staticmethod
@@ -290,7 +289,6 @@ class Menu:
         menu.mainloop(self.display)
 
     def result_board(self, new_record_list, if_new_record_list):
-        main.App.save_records(new_record_list)
         record_string = ""
         for index, i in enumerate(new_record_list):
             record_string += f"level{index+1}: {main.App.to_time(i, 0, 1)}{if_new_record_list[index]}\n"

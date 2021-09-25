@@ -131,7 +131,6 @@ class App:
                 start_time = 1
         if keys[K_ESCAPE]:
             if_new_record_list = self.save_records(new_record_list)
-            print(if_new_record_list)
             Menu.Menu.pause(Menu.Menu(), self.next_level-1, record_list, new_record_list, if_new_record_list)
         return current_time, start_time
 
@@ -177,7 +176,8 @@ class App:
             MazeCreator.MazeCreator.level7().on_execute(current_time, record_list, new_record_list)
         else:
             new_record_list.append(milliseconds - current_time)
-            Menu.Menu.result_board(Menu.Menu(), new_record_list)
+            if_new_record_list = self.save_records(new_record_list)
+            Menu.Menu.result_board(Menu.Menu(), new_record_list, if_new_record_list)
 
     # MAIN PART
     def on_execute(self, current_time, record_list, new_record_list, start_time=0):

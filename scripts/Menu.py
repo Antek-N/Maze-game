@@ -159,6 +159,8 @@ class Menu:
             self.register("Nick is in usage")
         if not password:
             self.register('Field "Password" is required')
+        if len(password) <= 4:
+            self.register('Password must be at least 5 characters long')
         if not password_2:
             self.register('Field "Repeat password" is required')
         if password != password_2:

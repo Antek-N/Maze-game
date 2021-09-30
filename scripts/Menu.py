@@ -176,7 +176,7 @@ class Menu:
         c = conn.cursor()
         c.execute(
             f"""
-            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 99999999)
+            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 99999999, 99999999)
             """)
         conn.commit()
         conn.close()
@@ -236,7 +236,8 @@ class Menu:
                             MIN(level4), 
                             MIN(level5),
                             MIN(level6),
-                            MIN(level7) FROM records
+                            MIN(level7),
+                            MIN(level8) FROM records
                             """)
         old_record_list = c.fetchall()
         record_string = ""

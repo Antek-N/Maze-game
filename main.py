@@ -174,6 +174,9 @@ class App:
         if self.next_level == 7:
             new_record_list.append(milliseconds - current_time)
             MazeCreator.MazeCreator.level7().on_execute(current_time, record_list, new_record_list)
+        if self.next_level == 8:
+            new_record_list.append(milliseconds - current_time)
+            MazeCreator.MazeCreator.level8().on_execute(current_time, record_list, new_record_list)
         else:
             new_record_list.append(milliseconds - current_time)
             if_new_record_list = self.save_records(new_record_list)

@@ -176,7 +176,8 @@ class Menu:
         c = conn.cursor()
         c.execute(
             f"""
-            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 99999999, 99999999)
+            INSERT INTO records VALUES ("{nick}", 999999999, 999999999, 999999999, 999999999, 999999999, 999999999,
+                                                  999999999, 999999999)
             """)
         conn.commit()
         conn.close()

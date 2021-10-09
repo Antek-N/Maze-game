@@ -3,7 +3,7 @@ import main
 
 
 class MazeCreator:
-    def __init__(self, width, height, maze):
+    def __init__(self, width: int, height: int, maze: list[int]):
         self.width = width
         self.height = height
         self.maze = maze
@@ -150,7 +150,7 @@ class MazeCreator:
                          1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], )
 
     # Handle collisions
-    def collisions(self):
+    def collisions(self) -> list[tuple[int, int, int]]:
         display_resolution = pygame.display.Info()
         display_width, display_height = display_resolution.current_w, display_resolution.current_h
         display_width -= self.width * 50
@@ -172,7 +172,7 @@ class MazeCreator:
         return self.list_of_blocks
 
     # Drawing maze
-    def draw(self, display_surf, maze_color):
+    def draw(self, display, maze_color):
         display_resolution = pygame.display.Info()
         display_width, display_height = display_resolution.current_w, display_resolution.current_h
         self.index_x = 0
@@ -186,7 +186,7 @@ class MazeCreator:
 
             if self.maze[self.index_x + (self.index_y * self.width)] == 1:
                 rect_layout = self.index_x * 50 + display_width, self.index_y * 50 + display_height, 50, 50
-                pygame.draw.rect(display_surf, maze_color, rect_layout)
+                pygame.draw.rect(display, maze_color, rect_layout)
 
             self.index_x += 1
             if self.index_x > self.width - 1:

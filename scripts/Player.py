@@ -2,7 +2,7 @@ import pygame
 
 
 class Player:
-    def __init__(self, x, y, maze_width, maze_height):
+    def __init__(self, x: int, y: int, maze_width: int, maze_height: int) -> None:
         display_resolution = pygame.display.Info()
         display_width, display_height = display_resolution.current_w, display_resolution.current_h
         display_width -= maze_width * 50
@@ -14,14 +14,14 @@ class Player:
         self.speed_of_movement = 2.5
 
     # Control settings
-    def move_right(self):
+    def move_right(self) -> None:
         self.x += self.speed_of_movement
 
-    def move_left(self):
+    def move_left(self) -> None:
         self.x -= self.speed_of_movement
 
-    def move_up(self):
+    def move_up(self) -> None:
         self.y -= self.speed_of_movement
 
-    def move_down(self):
+    def move_down(self) -> None:
         self.y += self.speed_of_movement

@@ -1,6 +1,5 @@
 from sys import exit
 import time
-from typing import Tuple, List
 import pygame
 from pygame.locals import *
 import sqlite3
@@ -11,8 +10,8 @@ import scripts.MazeCreator as MazeCreator
 
 class App:
 
-    def __init__(self, next_level: int, player_x: float, player_y: float, background_color: Tuple[int], maze_width: int,
-                 maze_height: int, maze_color: Tuple[int], maze: List[int]) -> None:
+    def __init__(self, next_level: int, player_x: int, player_y: int, background_color: tuple[int, int, int],
+                 maze_width: int, maze_height: int, maze_color: tuple[int, int, int], maze: list[int]) -> None:
         self.next_level = next_level
         self.player_x = player_x  # player start position (x)
         self.player_y = player_y  # player start position (y)
@@ -31,7 +30,7 @@ class App:
         self.display = pygame.display.set_mode((self.display_width, self.display_height))
 
     @staticmethod
-    def save_records(new_record_list: List[int]) -> List[str]:
+    def save_records(new_record_list: list[int]) -> list[str]:
         is_new_record_list = []
         # database start
         conn = sqlite3.connect('databases/records.db')
@@ -92,7 +91,7 @@ class App:
 
         return f"{m}:{s}:{ms}" if is_start else "0:00:000"
 
-    def collision_handling(self, collision_list: List[Tuple[int, int, int]], counter_of_loses: int, current_time: int,
+    def collision_handling(self, collision_list: list[tuple[int, int, int]], counter_of_loses: int, current_time: int,
                            start_time: int) -> [int, int, int]:
         for i in collision_list:
             if i[0] <= self.player.x <= i[1] and i[2] <= self.player.y <= i[3]:
@@ -105,7 +104,7 @@ class App:
                 start_time = 0
         return counter_of_loses, current_time, start_time
 
-    def events_handling(self, current_time: int, start_time: int, new_record_list: List[int],
+    def events_handling(self, current_time: int, start_time: int, new_record_list: list[int],
                         record_list: list[int]) -> [int, int]:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -139,7 +138,7 @@ class App:
             Menu.Menu.pause(Menu.Menu(), self.next_level-1, record_list, new_record_list, if_new_record_list)
         return current_time, start_time
 
-    def render_display(self, counter_of_loses: int, current_time: int, font_color: Tuple[int, int, int], font_type,
+    def render_display(self, counter_of_loses: int, current_time: int, font_color: tuple[int, int, int], font_type,
                        milliseconds: int, start_time: int) -> None:
         timer = font_type.render(f"Time: {App.to_time(milliseconds, current_time, start_time)}", True, font_color)
         loses_counter = font_type.render(f"Loses: {str(counter_of_loses)}", True, font_color)
@@ -150,8 +149,8 @@ class App:
         pygame.draw.rect(self.display, (200, 200, 50), (self.player.x, self.player.y, 10, 10))  # Drawing player
         pygame.display.flip()
 
-    def finish_handling(self, current_time: int, milliseconds: int, new_record_list: List[int],
-                        record_list: List[int]) -> None:
+    def finish_handling(self, current_time: int, milliseconds: int, new_record_list: list[int],
+                        record_list: list[int]) -> None:
         if self.player.x <= 0 + (self.display_width - self.maze_width * 50) / 2 \
                 or self.player.x >= self.maze_width * 50 - 10 + (self.display_width - self.maze_width * 50) / 2 \
                 or self.player.y >= self.maze_height * 50 - 10 + (self.display_height - self.maze_height * 50) / 2 \
@@ -161,8 +160,8 @@ class App:
             self.open_new_level(current_time, milliseconds, new_record_list,
                                 record_list)
 
-    def open_new_level(self, current_time: int, milliseconds: int, new_record_list: List[int],
-                       record_list: List[int]) -> None:
+    def open_new_level(self, current_time: int, milliseconds: int, new_record_list: list[int],
+                       record_list: list[int]) -> None:
         if self.next_level == 2:
             new_record_list.append(milliseconds - current_time)
             MazeCreator.MazeCreator.level2().on_execute(current_time, record_list, new_record_list)
@@ -190,7 +189,7 @@ class App:
             Menu.Menu.result_board(Menu.Menu(), new_record_list, if_new_record_list)
 
     # MAIN PART
-    def on_execute(self, current_time: int, record_list: List[int], new_record_list: List[int], start_time=0) -> None:
+    def on_execute(self, current_time: int, record_list: list[int], new_record_list: list[int], start_time=0) -> None:
         counter_of_loses = 0
         collision_list = self.maze.collisions()  # Set color of text
         self.create_display()

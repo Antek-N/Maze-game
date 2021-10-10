@@ -134,8 +134,8 @@ class App:
                 current_time = pygame.time.get_ticks()
                 start_time = 1
         if keys[K_ESCAPE]:
-            if_new_record_list = self.save_records(new_record_list)
-            Menu.Menu.pause(Menu.Menu(), self.next_level-1, record_list, new_record_list, if_new_record_list)
+            is_new_record_list = self.save_records(new_record_list)
+            Menu.Menu.pause(Menu.Menu(), self.next_level-1, record_list, new_record_list, is_new_record_list)
         return current_time, start_time
 
     def render_display(self, counter_of_loses: int, current_time: int, font_color: tuple[int, int, int], font_type,

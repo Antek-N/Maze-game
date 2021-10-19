@@ -25,14 +25,12 @@ class App:
         display_resolution = pygame.display.Info()
         self.display_width, self.display_height = display_resolution.current_w, display_resolution.current_h
 
-    # CREATE DISPLAY
     def create_display(self) -> None:
         self.display = pygame.display.set_mode((self.display_width, self.display_height))
 
     @staticmethod
     def save_records(new_record_list: list[int]) -> list[str]:
         is_new_record_list = []
-        # database start
         conn = sqlite3.connect('databases/records.db')
         c = conn.cursor()
         c.execute(
@@ -61,11 +59,9 @@ class App:
                                          level8 = {record_list[7]} WHERE nick = '{Menu.Menu.nick()}';""")
         conn.commit()
         conn.close()
-        # database end
 
         return is_new_record_list
 
-    # CONVERT MS TO M:SS:MS FORMAT
     @staticmethod
     def to_time(ms: int, current_time: int, is_start: int) -> str:
         ms -= current_time

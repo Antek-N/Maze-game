@@ -1,0 +1,60 @@
+import pygame_menu
+
+from scripts.menu.window_settings import WindowSettings
+from scripts.menu.menu_manager.menu_manager import MenuManager
+
+from scripts.utils.global_variables.global_variables import GlobalVariables
+from scripts.utils.gameplay.start_game import Game
+
+
+class Pause:
+    """
+    A class that defines the pause menu.
+
+    This class displays the pause menu when the player clicks the 'ESC' key during the game to pause it.
+    The pause menu offers options to play again or go back to the main menu.
+    """
+    def __init__(self) -> None:
+        self.pause()
+
+    def pause(self) -> None:
+        """
+        Displays the pause menu.
+        (main method of the class)
+
+        :param: None
+        :return: None
+        """
+        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
+                                width=WindowSettings.DISPLAY_WIDTH,
+                                theme=WindowSettings.THEME,
+                                title='Pause')
+
+        menu.add.button('Play again', lambda: self.play_again())
+        menu.add.button('Back to menu', lambda: self.show_results())
+
+        menu.mainloop(WindowSettings.DISPLAY)
+
+    @staticmethod
+    def show_results() -> None:
+        """
+        Goes to the show_result_board screen.
+
+        :param: None
+        :return: None
+        """
+        GlobalVariables.current_level_number = 0
+        GlobalVariables.clock_instance.reset_and_stop_clock()
+        MenuManager().go_to_screen("show_result_board")
+
+    @staticmethod
+    def play_again() -> None:
+        """
+        Restarts the game from the current level.
+
+        :param: None
+        :return: None
+        """
+        GlobalVariables.current_level_number -= 1
+        GlobalVariables.clock_instance.reset_and_stop_clock()
+        Game().on_execute()

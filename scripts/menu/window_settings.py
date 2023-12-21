@@ -48,7 +48,7 @@ class WindowSettings:
         :param: None
         :return: None
         """
-        pygame.display.set_icon(pygame.image.load(r'img\icon.png'))
+        pygame.display.set_icon(pygame.image.load(r'img/icon.png'))
 
     @staticmethod
     def set_theme() -> None:
@@ -59,7 +59,7 @@ class WindowSettings:
         :return: None
         """
         bg_image = pygame_menu.baseimage.BaseImage(
-            image_path=r"img\theme.jpg",
+            image_path=r"img/theme.jpg",
             drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL,
             drawing_offset=(0, 0))
 

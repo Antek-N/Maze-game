@@ -31,7 +31,7 @@ class Game:
         """
         # Create display and set font type
         GlobalVariables.display = create_display()
-        GlobalVariables.font_type = pygame.font.Font(r"fonts\segoeprb.ttf", 30)
+        GlobalVariables.font_type = pygame.font.Font(r"fonts/segoeprb.ttf", 30)
 
         # Set tick clock and fps rate
         tick_clock = pygame.time.Clock()

@@ -58,7 +58,7 @@ class FinishHandling:
                 self.open_new_level()
                 self.append_time_and_reset_clock()
             else:
-                # If the current level is not the last level in the game
+                # If the current level is the last level in the game
                 time.sleep(0.4)
                 self.append_time_and_reset_clock()
                 self.reset_current_level_and_show_result_board()

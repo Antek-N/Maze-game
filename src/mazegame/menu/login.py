@@ -1,14 +1,12 @@
-import sqlite3
 import logging
+import sqlite3
 
 import pygame_menu
 
 from mazegame.menu.menu_manager.menu_manager import MenuManager
 from mazegame.menu.window_settings import WindowSettings
-
 from mazegame.utils.databases.records_database import RecordsDatabase
 from mazegame.utils.global_variables.global_variables import GlobalVariables
-
 from mazegame.utils.paths.paths import base_dir
 
 log = logging.getLogger(__name__)
@@ -24,11 +22,12 @@ class Login:
     It checks the given data against the database using the `authenticate()` method.
     If the authentication is successful, it performs actions using the `login_success()` method.
     """
+
     def __init__(self) -> None:
         log.info("Opening Login screen")
         self.login_screen()
 
-    def login_screen(self, error_text="") -> None:
+    def login_screen(self, error_text: str = "") -> None:
         """
         Displays the login screen.
         (main method of the class)
@@ -37,18 +36,20 @@ class Login:
         :return: None
         """
         log.debug("Initializing Login UI (has_error=%s)", bool(error_text))
-        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
-                                width=WindowSettings.DISPLAY_WIDTH,
-                                theme=WindowSettings.THEME,
-                                title='Sign in')
+        menu = pygame_menu.Menu(
+            height=WindowSettings.DISPLAY_HEIGHT,
+            width=WindowSettings.DISPLAY_WIDTH,
+            theme=WindowSettings.THEME,
+            title="Sign in",
+        )
 
         menu.add.label(error_text, font_size=15, font_color=(200, 0, 0))
 
-        nick_field = menu.add.text_input('nick: ', maxchar=16)
-        password_field = menu.add.text_input('Password: ', maxchar=32, password=True)
+        nick_field = menu.add.text_input("nick: ", maxchar=16)
+        password_field = menu.add.text_input("Password: ", maxchar=32, password=True)
 
-        menu.add.button('Continue', lambda: self.check_login(nick_field.get_value(), password_field.get_value()))
-        menu.add.button('Back', lambda: MenuManager().go_to_previous_screen())
+        menu.add.button("Continue", lambda: self.check_login(nick_field.get_value(), password_field.get_value()))
+        menu.add.button("Back", lambda: MenuManager().go_to_previous_screen())
 
         menu.mainloop(WindowSettings.DISPLAY)
 
@@ -78,7 +79,6 @@ class Login:
             log.warning("Login failed for '%s'", nick)
             self.login_screen("Incorrect nick or password")
 
-
     @staticmethod
     def authenticate(nick: str, password: str) -> bool:
         """
@@ -88,7 +88,7 @@ class Login:
         :param password: The password entered by the user
         :return: True if the authentication is successful, False otherwise
         """
-        query = 'SELECT * FROM accounts WHERE nick=? AND password=?'
+        query = "SELECT * FROM accounts WHERE nick=? AND password=?"
         params = (nick, password)
 
         ac_database_path = ASSETS_DIR / "databases" / "accounts.db"

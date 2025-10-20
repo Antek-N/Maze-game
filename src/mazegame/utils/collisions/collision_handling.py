@@ -1,5 +1,5 @@
-import time
 import logging
+import time
 
 import pygame
 
@@ -14,6 +14,7 @@ class CollisionHandling:
 
     This class checks collision ranges and performs actions when a collision occurs.
     """
+
     def collision_handling(self) -> None:
         """
         Handle collisions by checking collision ranges and performing actions if collision occurs.
@@ -65,8 +66,8 @@ class CollisionHandling:
         GlobalVariables.clock_instance.reset_and_stop_clock()
 
         # Set the player position to the start
-        player.x = level['x_start_position'] - 30 + (display_width - level['maze_width'] * 50) / 2
-        player.y = level['y_start_position'] - 30 + (display_height - level['maze_height'] * 50) / 2
+        player.x = level["x_start_position"] - 30 + (display_width - level["maze_width"] * 50) / 2
+        player.y = level["y_start_position"] - 30 + (display_height - level["maze_height"] * 50) / 2
         log.info("Player reset to start position: (%.2f, %.2f)", player.x, player.y)
 
         time.sleep(0.4)

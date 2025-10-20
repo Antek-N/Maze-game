@@ -2,7 +2,6 @@ import logging
 import sqlite3
 
 from mazegame.utils.global_variables.global_variables import GlobalVariables
-
 from mazegame.utils.paths.paths import base_dir
 
 log = logging.getLogger(__name__)
@@ -18,6 +17,7 @@ class RecordsDatabase:
     If the actual number of columns is less than the expected number of levels, missing columns are created.
     If the actual number of columns is greater than the expected number of levels, excess columns are removed.
     """
+
     def __init__(self) -> None:
         records_database_path = ASSETS_DIR / "databases" / "records.db"
         log.debug("Connecting to records database: %s", records_database_path)
@@ -77,7 +77,7 @@ class RecordsDatabase:
         # Create list of names of missing columns
         missing_columns = []
         for i in range(1, self.number_of_levels + 1):
-            column_name = 'level' + str(i)
+            column_name = "level" + str(i)
             if column_name not in existing_columns:
                 missing_columns.append(column_name)
 
@@ -111,7 +111,7 @@ class RecordsDatabase:
         # Create list of excess columns
         excess_columns = []
         for column in existing_columns:
-            if int(column[len('level'):]) > self.number_of_levels:
+            if int(column[len("level") :]) > self.number_of_levels:
                 excess_columns.append(column)
 
         log.debug("Excess columns to remove: %s", excess_columns)

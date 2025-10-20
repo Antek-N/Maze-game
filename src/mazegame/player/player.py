@@ -7,6 +7,7 @@ class Player:
     """
     A class representing a player in the game.
     """
+
     def __init__(self) -> None:
         """
         Initializes a player object.
@@ -14,8 +15,9 @@ class Player:
         :param: None
         :return: None
         """
-        self.x = 0  # x start location
-        self.y = 0  # y start location
+        self.x = 0.0  # x start location
+        self.y = 0.0  # y start location
+        self.speed_of_movement = 1.45
         self.speed_of_movement = 1.45
         log.info("Player initialized at position (%.2f, %.2f) with speed %.2f", self.x, self.y, self.speed_of_movement)
 

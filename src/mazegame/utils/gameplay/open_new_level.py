@@ -1,10 +1,10 @@
-import pygame
 import logging
 
-from mazegame.maze_creator.levels import Levels
+import pygame
 
-from mazegame.utils.global_variables.global_variables import GlobalVariables
+from mazegame.maze_creator.levels import Levels
 from mazegame.utils.collisions.get_collision_list import GetCollisionList
+from mazegame.utils.global_variables.global_variables import GlobalVariables
 
 log = logging.getLogger(__name__)
 
@@ -17,6 +17,7 @@ class OpenNewLevel:
     retrieves the new level data, updates the global variables with the new level data,
     and sets the player's position based on the new level data and display dimensions.
     """
+
     def open_new_level(self) -> None:
         """
         Opens a new game level.
@@ -45,15 +46,18 @@ class OpenNewLevel:
 
         # Set player position based on the new level data and display dimensions
         display_width, display_height = self.get_display_dimensions()
-        maze_width, maze_height = new_level['maze_width'], new_level['maze_height']
-        x_start_position, y_start_position = new_level['x_start_position'], new_level['y_start_position']
+        maze_width, maze_height = new_level["maze_width"], new_level["maze_height"]
+        x_start_position, y_start_position = new_level["x_start_position"], new_level["y_start_position"]
 
-        self.set_player_position(display_width, display_height, maze_width, maze_height, x_start_position,
-                                 y_start_position)
-        log.info("Player positioned at start of level %d (x=%.2f, y=%.2f)",
-                 GlobalVariables.current_level_number,
-                 GlobalVariables.player_instance.x,
-                 GlobalVariables.player_instance.y)
+        self.set_player_position(
+            display_width, display_height, maze_width, maze_height, x_start_position, y_start_position
+        )
+        log.info(
+            "Player positioned at start of level %d (x=%.2f, y=%.2f)",
+            GlobalVariables.current_level_number,
+            GlobalVariables.player_instance.x,
+            GlobalVariables.player_instance.y,
+        )
 
     @staticmethod
     def get_new_level_data() -> dict:
@@ -87,9 +91,9 @@ class OpenNewLevel:
         :return: None
         """
         log.debug("Updating collision list for level %d", GlobalVariables.current_level_number)
-        GlobalVariables.collision_list = GetCollisionList.get_collisions_list(level['maze'],
-                                                                              level['maze_width'],
-                                                                              level['maze_height'])
+        GlobalVariables.collision_list = GetCollisionList.get_collisions_list(
+            level["maze"], level["maze_width"], level["maze_height"]
+        )
         log.debug("Collision list updated (%d items)", len(GlobalVariables.collision_list))
 
     @staticmethod
@@ -105,8 +109,14 @@ class OpenNewLevel:
         return display_info.current_w, display_info.current_h
 
     @staticmethod
-    def set_player_position(display_width: float, display_height: float, maze_width: int, maze_height: int,
-                            x_start_position: int, y_start_position: int) -> None:
+    def set_player_position(
+        display_width: float,
+        display_height: float,
+        maze_width: int,
+        maze_height: int,
+        x_start_position: int,
+        y_start_position: int,
+    ) -> None:
         """
         Sets the player's position based on the display dimensions, maze dimensions, and start positions.
 

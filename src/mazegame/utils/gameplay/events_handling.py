@@ -1,9 +1,8 @@
-import pygame
-from pygame.locals import *
 import logging
 
-from mazegame.menu.menu_manager.menu_manager import MenuManager
+import pygame
 
+from mazegame.menu.menu_manager.menu_manager import MenuManager
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 
 log = logging.getLogger(__name__)
@@ -15,6 +14,7 @@ class EventsHandling:
 
     This class checks for event types, such as quitting and key presses, and performs corresponding actions.
     """
+
     def events_handling(self) -> None:
         """
         Handles events, such as quitting and key presses.
@@ -36,21 +36,21 @@ class EventsHandling:
         keys = pygame.key.get_pressed()
 
         # Handle player movement based on pressed keys
-        if keys[K_RIGHT] or keys[K_d]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             GlobalVariables.player_instance.move_right()
             self.start_clock()
-        if keys[K_LEFT] or keys[K_a]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             GlobalVariables.player_instance.move_left()
             self.start_clock()
-        if keys[K_UP] or keys[K_w]:
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
             GlobalVariables.player_instance.move_up()
             self.start_clock()
-        if keys[K_DOWN] or keys[K_s]:
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             GlobalVariables.player_instance.move_down()
             self.start_clock()
 
         # Handle the ESC key to go to the pause screen
-        if keys[K_ESCAPE]:
+        if keys[pygame.K_ESCAPE]:
             log.info("ESC pressed — opening pause screen")
             self.handle_escape()
 

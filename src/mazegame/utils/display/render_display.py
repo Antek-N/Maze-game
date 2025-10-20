@@ -1,10 +1,10 @@
-import pygame
 import logging
 
-from mazegame.maze_creator.draw_maze import DrawMaze
+import pygame
 
-from mazegame.utils.time.convert_time import convert_time
+from mazegame.maze_creator.draw_maze import DrawMaze
 from mazegame.utils.global_variables.global_variables import GlobalVariables
+from mazegame.utils.time.convert_time import convert_time
 
 log = logging.getLogger(__name__)
 
@@ -16,6 +16,7 @@ class RenderDisplay:
     This class draws the maze, counter of losses, timer, and player on the display.
     It updates the display to show the current state of the game.
     """
+
     @staticmethod
     def render_display() -> None:
         """
@@ -32,14 +33,16 @@ class RenderDisplay:
         level = GlobalVariables.level
 
         # Draw background
-        GlobalVariables.display.fill(level['background_color'])
+        GlobalVariables.display.fill(level["background_color"])
 
         # Draw maze
-        DrawMaze.draw_maze(GlobalVariables.display, level['maze'], level['maze_color'], level['maze_width'], level['maze_height'])
+        DrawMaze.draw_maze(
+            GlobalVariables.display, level["maze"], level["maze_color"], level["maze_width"], level["maze_height"]
+        )
 
         # Draw counter_of_loses and timer
         font_type = GlobalVariables.font_type
-        font_color = tuple(255 - color for color in level['background_color'])
+        font_color = tuple(255 - color for color in level["background_color"])
         timer_text = f"Time: {convert_time(GlobalVariables.clock_instance.get_time())}"
         loses_counter_text = f"Loses: {str(GlobalVariables.counter_of_loses)}"
 
@@ -47,7 +50,11 @@ class RenderDisplay:
         GlobalVariables.display.blit(font_type.render(timer_text, True, font_color), (display_width - 275, 0))
 
         # Draw player
-        pygame.draw.rect(GlobalVariables.display, (200, 200, 50), (GlobalVariables.player_instance.x, GlobalVariables.player_instance.y, 10, 10))
+        pygame.draw.rect(
+            GlobalVariables.display,
+            (200, 200, 50),
+            (GlobalVariables.player_instance.x, GlobalVariables.player_instance.y, 10, 10),
+        )
 
         # Update the display
         pygame.display.flip()

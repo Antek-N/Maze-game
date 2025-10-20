@@ -1,5 +1,5 @@
-import sqlite3
 import logging
+import sqlite3
 
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 from mazegame.utils.paths.paths import base_dir
@@ -18,6 +18,7 @@ class SaveRecords:
     (times from the records-database), creates a new record list by comparing the database times with
     the times list, and updates the database with the created new record list.
     """
+
     def __init__(self) -> None:
         # Establish a connection to the SQLite database
         records_database_path = ASSETS_DIR / "databases" / "records.db"
@@ -104,7 +105,7 @@ class SaveRecords:
         record_list = []
 
         # Compare each pair of times in the database_times and the times_list
-        for db_time, time in zip(database_times, times_list):
+        for db_time, time in zip(database_times, times_list, strict=False):
             if db_time is not None:
                 # If the database time exists, append the minimum of the db_time and the time
                 record_list.append(min(db_time, time))
@@ -113,7 +114,7 @@ class SaveRecords:
                 record_list.append(time)
 
         # Append any remaining records from the database times that are not present in the times list
-        remaining_records = database_times[len(times_list):]
+        remaining_records = database_times[len(times_list) :]
         record_list.extend(remaining_records)
 
         log.debug("New record list created: %s", record_list)

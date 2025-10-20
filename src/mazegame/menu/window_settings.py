@@ -1,12 +1,14 @@
+import logging
+
 import pygame
 import pygame_menu
-import logging
 
 from mazegame.utils.paths.paths import base_dir
 
 log = logging.getLogger(__name__)
 
 ASSETS_DIR = base_dir() / "assets"
+
 
 class WindowSettings:
     """
@@ -17,10 +19,11 @@ class WindowSettings:
     :cvar DISPLAY: The display object.
     :cvar THEME: The pygame_menu theme object.
     """
+
     DISPLAY_WIDTH = 0
     DISPLAY_HEIGHT = 0
-    DISPLAY = None
-    THEME = None
+    DISPLAY: pygame.Surface | None = None
+    THEME: pygame_menu.Theme | None = None
 
     def initialize_settings(self) -> None:
         """
@@ -72,9 +75,7 @@ class WindowSettings:
         log.debug("Setting pygame_menu theme")
         bg_image_path = ASSETS_DIR / "img" / "theme.jpg"
         bg_image = pygame_menu.baseimage.BaseImage(
-            image_path=bg_image_path,
-            drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL,
-            drawing_offset=(0, 0)
+            image_path=bg_image_path, drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL, drawing_offset=(0, 0)
         )
 
         WindowSettings.THEME = pygame_menu.Theme(
@@ -86,7 +87,8 @@ class WindowSettings:
             title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE,
             cursor_color=(200, 0, 0),
             selection_color=(140, 0, 0),
-            widget_font_color=(40, 40, 40))
+            widget_font_color=(40, 40, 40),
+        )
         log.debug("Theme set successfully")
 
     @staticmethod
@@ -99,11 +101,14 @@ class WindowSettings:
         """
         log.debug("Fetching display resolution")
         display_resolution = pygame.display.Info()
-        WindowSettings.DISPLAY_WIDTH, WindowSettings.DISPLAY_HEIGHT = display_resolution.current_w, display_resolution.current_h
+        WindowSettings.DISPLAY_WIDTH, WindowSettings.DISPLAY_HEIGHT = (
+            display_resolution.current_w,
+            display_resolution.current_h,
+        )
         log.info("Display size set to %dx%d", WindowSettings.DISPLAY_WIDTH, WindowSettings.DISPLAY_HEIGHT)
 
     @staticmethod
-    def set_display():
+    def set_display() -> None:
         """
         Sets the display.
 

@@ -1,9 +1,12 @@
 import pygame
 from pygame.locals import *
+import logging
 
 from mazegame.menu.menu_manager.menu_manager import MenuManager
 
 from mazegame.utils.global_variables.global_variables import GlobalVariables
+
+log = logging.getLogger(__name__)
 
 
 class EventsHandling:
@@ -24,6 +27,7 @@ class EventsHandling:
         # Handle exit event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                log.info("QUIT event detected — exiting game")
                 pygame.quit()
                 exit()
 
@@ -47,6 +51,7 @@ class EventsHandling:
 
         # Handle the ESC key to go to the pause screen
         if keys[K_ESCAPE]:
+            log.info("ESC pressed — opening pause screen")
             self.handle_escape()
 
     @staticmethod
@@ -58,6 +63,7 @@ class EventsHandling:
         :return: None
         """
         if not GlobalVariables.clock_instance.get_is_running():
+            log.debug("Starting game clock")
             GlobalVariables.clock_instance.start_clock()
 
     @staticmethod
@@ -68,4 +74,5 @@ class EventsHandling:
         :param: None
         :return: None
         """
+        log.debug("Navigating to pause screen")
         MenuManager().go_to_screen("pause")

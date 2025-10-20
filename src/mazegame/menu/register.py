@@ -1,4 +1,6 @@
 import sqlite3
+import logging
+from typing import Union
 
 import pygame_menu
 
@@ -8,6 +10,8 @@ from mazegame.menu.menu_manager.menu_manager import MenuManager
 from mazegame.utils.databases.records_database import RecordsDatabase
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 from mazegame.utils.paths.paths import base_dir
+
+log = logging.getLogger(__name__)
 
 ASSETS_DIR = base_dir() / "assets"
 
@@ -28,6 +32,7 @@ class Register:
         :param error_text: Error message to display on the screen. Defaults to ""
         :return: None
         """
+        log.debug("Initializing Register UI (has_error=%s)", bool(error_text))
         menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
                                 width=WindowSettings.DISPLAY_WIDTH,
                                 theme=WindowSettings.THEME,
@@ -54,6 +59,7 @@ class Register:
         :param repeated_password: The repeated password entered by the user
         :return: None
         """
+        log.debug("Applying registration for nick '%s'", nick)
         # Validate the user input data before registration
         if not self.validate_data(nick, password, repeated_password):
             return
@@ -63,6 +69,8 @@ class Register:
 
         # Insert a default record for the user into the records database
         self.insert_default_record_to_database(nick)
+
+        log.info("Registration successful for '%s'", nick)
 
         # Go back to the initial menu screen
         MenuManager().go_to_screen("initial_menu")
@@ -77,26 +85,32 @@ class Register:
         :return: True if the data is valid, False otherwise
         """
         if not nick:
+            log.warning("Registration validation failed: empty nick")
             self.register_screen('Field "Nick" is required')
             return False
 
         if not password:
+            log.warning("Registration validation failed for '%s': empty password", nick)
             self.register_screen('Field "Password" is required')
             return False
 
         if not repeated_password:
+            log.warning("Registration validation failed for '%s': empty repeated password", nick)
             self.register_screen('Field "Repeat password" is required')
             return False
 
         if len(password) <= 4:
+            log.warning("Registration validation failed for '%s': password too short", nick)
             self.register_screen('Password must be at least 5 characters long')
             return False
 
         if password != repeated_password:
+            log.warning("Registration validation failed for '%s': passwords do not match", nick)
             self.register_screen("Passwords do not match")
             return False
 
         if self.check_account_exists(nick):
+            log.info("Registration blocked: user '%s' already exists", nick)
             self.register_screen('User already exists')
             return False
 
@@ -111,6 +125,7 @@ class Register:
         :return: True if the account exists, False otherwise
         """
         ac_database_path = ASSETS_DIR / "databases" / "accounts.db"
+        log.debug("Checking if account exists for '%s' in DB: %s", nick, ac_database_path)
         with sqlite3.connect(ac_database_path) as conn:
             c = conn.cursor()
             c.execute("SELECT * FROM accounts WHERE nick=?", (nick,))
@@ -126,6 +141,7 @@ class Register:
         :return: None
         """
         ac_database_path = ASSETS_DIR / "databases" / "accounts.db"
+        log.info("Inserting new account for '%s'", nick)
         with sqlite3.connect(ac_database_path) as conn:
             c = conn.cursor()
             c.execute("INSERT INTO accounts VALUES (?, ?)", (nick, password))
@@ -143,6 +159,8 @@ class Register:
         number_of_levels = GlobalVariables.number_of_levels
 
         records_database_path = ASSETS_DIR / "databases" / "records.db"
+        log.debug("Inserting default records for '%s' (%d levels) into DB: %s",
+                  nick, number_of_levels, records_database_path)
         with sqlite3.connect(records_database_path) as conn:
             c = conn.cursor()
 

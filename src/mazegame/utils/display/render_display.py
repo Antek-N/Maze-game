@@ -1,9 +1,12 @@
 import pygame
+import logging
 
 from mazegame.maze_creator.draw_maze import DrawMaze
 
 from mazegame.utils.time.convert_time import convert_time
 from mazegame.utils.global_variables.global_variables import GlobalVariables
+
+log = logging.getLogger(__name__)
 
 
 class RenderDisplay:

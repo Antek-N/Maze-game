@@ -1,5 +1,7 @@
 import logging
 
+log = logging.getLogger(__name__)
+
 
 class MenuManager:
     """
@@ -20,12 +22,14 @@ class MenuManager:
         :return: None
         """
         if screen in self.screens:
+            log.info("Navigating to screen: %s", screen)
             self.stack[0], self.stack[1] = self.stack[1], screen
             screen_method = self.screens[screen]
             screen_method()
+            log.debug("Screen '%s' opened successfully", screen)
         # If the screen does not exist in the screens list
         else:
-            logging.warning(f"The '{screen}' screen doesn't exist in set_screen.py")
+            log.warning("The '%s' screen doesn't exist in set_screen.py", screen)
 
     def go_to_previous_screen(self) -> None:
         """
@@ -35,9 +39,11 @@ class MenuManager:
         :return: None
         """
         if self.stack[0] in self.screens:
+            log.info("Returning to previous screen: %s", self.stack[0])
             self.stack[0], self.stack[1] = self.stack[1], self.stack[0]
             screen_method = self.screens[self.stack[1]]
             screen_method()
+            log.debug("Returned to screen '%s'", self.stack[1])
         # If the previous screen does not exist
         else:
-            logging.warning("The previous screen doesn't exist")
+            log.warning("The previous screen doesn't exist")

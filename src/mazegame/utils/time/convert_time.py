@@ -1,3 +1,8 @@
+import logging
+
+log = logging.getLogger(__name__)
+
+
 def convert_time(time: float) -> str:
     """
     Converts time in seconds to a string in the “MM:SS:MMM” (minutes:seconds:milliseconds) format.
@@ -13,4 +18,6 @@ def convert_time(time: float) -> str:
     seconds = int(time % 60)
     ms = int(round((time % 1) * 1000))
 
-    return f"{minutes:02d}:{seconds:02d}:{ms:03d}"
+    formatted_time = f"{minutes:02d}:{seconds:02d}:{ms:03d}"
+
+    return formatted_time

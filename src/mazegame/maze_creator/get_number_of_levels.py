@@ -1,4 +1,7 @@
 from mazegame.maze_creator.levels import Levels
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class GetNumberOfLevels:
@@ -17,8 +20,11 @@ class GetNumberOfLevels:
         :param: None
         :return: The number of levels.
         """
+        log.debug("Checking number of available levels...")
         level_number = 1
         while hasattr(Levels, f"level{level_number}"):
             level_number += 1
 
-        return level_number - 1
+        total_levels = level_number - 1
+        log.debug("Detected %d levels", total_levels)
+        return total_levels

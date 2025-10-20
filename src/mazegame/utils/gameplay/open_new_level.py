@@ -1,9 +1,12 @@
 import pygame
+import logging
 
 from mazegame.maze_creator.levels import Levels
 
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 from mazegame.utils.collisions.get_collision_list import GetCollisionList
+
+log = logging.getLogger(__name__)
 
 
 class OpenNewLevel:
@@ -29,13 +32,16 @@ class OpenNewLevel:
         # Increment the current level number and reset the counter of losses
         GlobalVariables.current_level_number += 1
         GlobalVariables.counter_of_loses = 0
+        log.info("Opening new level %d", GlobalVariables.current_level_number)
 
         # Get the new level data
         new_level = self.get_new_level_data()
+        log.debug("New level data retrieved successfully")
 
         # Update the global variables with the new level data
         self.update_level(new_level)
         self.update_collision_list(new_level)
+        log.debug("Global variables updated for level %d", GlobalVariables.current_level_number)
 
         # Set player position based on the new level data and display dimensions
         display_width, display_height = self.get_display_dimensions()
@@ -44,6 +50,10 @@ class OpenNewLevel:
 
         self.set_player_position(display_width, display_height, maze_width, maze_height, x_start_position,
                                  y_start_position)
+        log.info("Player positioned at start of level %d (x=%.2f, y=%.2f)",
+                 GlobalVariables.current_level_number,
+                 GlobalVariables.player_instance.x,
+                 GlobalVariables.player_instance.y)
 
     @staticmethod
     def get_new_level_data() -> dict:
@@ -53,6 +63,7 @@ class OpenNewLevel:
         :param: None
         :return: The data for the new level
         """
+        log.debug("Retrieving level data for level %d", GlobalVariables.current_level_number)
         level_method = getattr(Levels, f"level{GlobalVariables.current_level_number}")
         return level_method()
 
@@ -65,6 +76,7 @@ class OpenNewLevel:
         :return: None
         """
         GlobalVariables.level = level
+        log.debug("GlobalVariables.level updated")
 
     @staticmethod
     def update_collision_list(level: dict) -> None:
@@ -74,9 +86,11 @@ class OpenNewLevel:
         :param level: The new level data
         :return: None
         """
+        log.debug("Updating collision list for level %d", GlobalVariables.current_level_number)
         GlobalVariables.collision_list = GetCollisionList.get_collisions_list(level['maze'],
                                                                               level['maze_width'],
                                                                               level['maze_height'])
+        log.debug("Collision list updated (%d items)", len(GlobalVariables.collision_list))
 
     @staticmethod
     def get_display_dimensions() -> tuple[int, int]:
@@ -87,6 +101,7 @@ class OpenNewLevel:
         :return: The current display width and height
         """
         display_info = pygame.display.Info()
+        log.debug("Fetched display dimensions: %dx%d", display_info.current_w, display_info.current_h)
         return display_info.current_w, display_info.current_h
 
     @staticmethod
@@ -106,3 +121,4 @@ class OpenNewLevel:
         player = GlobalVariables.player_instance
         player.x = x_start_position - 30 + (display_width - maze_width * 50) / 2
         player.y = y_start_position - 30 + (display_height - maze_height * 50) / 2
+        log.debug("Player position set to (%.2f, %.2f)", player.x, player.y)

@@ -1,7 +1,10 @@
 import pygame
 import pygame_menu
+import logging
 
 from mazegame.utils.paths.paths import base_dir
+
+log = logging.getLogger(__name__)
 
 ASSETS_DIR = base_dir() / "assets"
 
@@ -27,11 +30,13 @@ class WindowSettings:
         :param: None
         :return: None
         """
+        log.info("Initializing window settings")
         self.set_program_title()
         self.set_program_icon()
         self.set_display_size()
         self.set_display()
         self.set_theme()
+        log.debug("Window settings initialized successfully")
 
     @staticmethod
     def set_program_title() -> None:
@@ -41,6 +46,7 @@ class WindowSettings:
         :param: None
         :return: None
         """
+        log.debug("Setting program title")
         pygame.display.set_caption("DotGame")
 
     @staticmethod
@@ -52,6 +58,7 @@ class WindowSettings:
         :return: None
         """
         icon_path = ASSETS_DIR / "img" / "icon.png"
+        log.debug("Setting program icon")
         pygame.display.set_icon(pygame.image.load(icon_path))
 
     @staticmethod
@@ -62,6 +69,7 @@ class WindowSettings:
         :param: None
         :return: None
         """
+        log.debug("Setting pygame_menu theme")
         bg_image_path = ASSETS_DIR / "img" / "theme.jpg"
         bg_image = pygame_menu.baseimage.BaseImage(
             image_path=bg_image_path,
@@ -79,6 +87,7 @@ class WindowSettings:
             cursor_color=(200, 0, 0),
             selection_color=(140, 0, 0),
             widget_font_color=(40, 40, 40))
+        log.debug("Theme set successfully")
 
     @staticmethod
     def set_display_size() -> None:
@@ -88,8 +97,10 @@ class WindowSettings:
         :param: None
         :return: None
         """
+        log.debug("Fetching display resolution")
         display_resolution = pygame.display.Info()
         WindowSettings.DISPLAY_WIDTH, WindowSettings.DISPLAY_HEIGHT = display_resolution.current_w, display_resolution.current_h
+        log.info("Display size set to %dx%d", WindowSettings.DISPLAY_WIDTH, WindowSettings.DISPLAY_HEIGHT)
 
     @staticmethod
     def set_display():
@@ -99,4 +110,6 @@ class WindowSettings:
         :param: None
         :return: None
         """
+        log.debug("Creating display surface (%dx%d)", WindowSettings.DISPLAY_WIDTH, WindowSettings.DISPLAY_HEIGHT)
         WindowSettings.DISPLAY = pygame.display.set_mode((WindowSettings.DISPLAY_WIDTH, WindowSettings.DISPLAY_HEIGHT))
+        log.debug("Display surface created successfully")

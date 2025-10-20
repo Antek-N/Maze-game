@@ -7,6 +7,9 @@ from mazegame.menu.records import MainRecords, MyRecords, GlobalRecords
 from mazegame.menu.help import Help
 from mazegame.menu.show_result_board import ShowResultBoard
 from mazegame.menu.pause import Pause
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class SetScreens:
@@ -21,6 +24,7 @@ class SetScreens:
         :param: None
         :return: None
         """
+        log.info("Setting up screens for MenuManager")
         MenuManager.screens = {'initial_menu': InitialMenu,
                                'login': Login,
                                'register': Register,
@@ -32,3 +36,4 @@ class SetScreens:
                                'show_result_board': ShowResultBoard,
                                'pause': Pause
                                }
+        log.debug("Screens configured: %s", list(MenuManager.screens.keys()))

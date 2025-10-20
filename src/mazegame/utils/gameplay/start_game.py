@@ -1,4 +1,5 @@
 import pygame
+import logging
 
 from mazegame.utils.gameplay.events_handling import EventsHandling
 from mazegame.utils.collisions.collision_handling import CollisionHandling
@@ -10,6 +11,9 @@ from mazegame.utils.global_variables.global_variables import GlobalVariables
 from mazegame.utils.paths.paths import base_dir
 
 ASSETS_DIR = base_dir() / "assets"
+
+log = logging.getLogger(__name__)
+
 
 class Game:
     """
@@ -31,19 +35,25 @@ class Game:
         :param: None
         :return: None
         """
+        log.info("Game execution started")
+
         # Create display and set font type
         GlobalVariables.display = create_display()
         font_path = ASSETS_DIR / "fonts" / "segoeprb.ttf"
         GlobalVariables.font_type = pygame.font.Font(font_path, 30)
+        log.debug("Display and font initialized")
 
         # Set tick clock and fps rate
         tick_clock = pygame.time.Clock()
         fps = 220
+        log.debug("Game clock initialized with FPS limit: %d", fps)
 
         # Open first level
+        log.info("Opening first level")
         OpenNewLevel().open_new_level()
 
         # Execute game mainloop
+        log.info("Starting main game loop")
         while True:
             # Update the game clock
             GlobalVariables.clock_instance.update()

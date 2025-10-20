@@ -1,4 +1,5 @@
 import sqlite3
+import logging
 
 import pygame_menu
 
@@ -11,6 +12,8 @@ from mazegame.utils.save_records.save_records import SaveRecords
 
 from mazegame.utils.paths.paths import base_dir
 
+log = logging.getLogger(__name__)
+
 ASSETS_DIR = base_dir() / "assets"
 
 class ShowResultBoard:
@@ -20,6 +23,7 @@ class ShowResultBoard:
     This class displays the result board screen, which shows the player's results from the current gameplay.
     """
     def __init__(self) -> None:
+        log.info("Opening Result Board screen")
         self.result_board()
 
     def result_board(self) -> None:
@@ -31,6 +35,7 @@ class ShowResultBoard:
         :param: None
         :return: None
         """
+        log.debug("Initializing Result Board UI")
         menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
                                 width=WindowSettings.DISPLAY_WIDTH,
                                 theme=WindowSettings.THEME,
@@ -42,14 +47,17 @@ class ShowResultBoard:
         if result_string:
             menu.add.label(result_string, font_size=25, font_color=(40, 40, 40))
         else:
+            log.info("No results to display on Result Board")
             menu.add.label("You have no results\n", font_size=25, font_color=(255, 0, 0))
 
         menu.add.button('Continue', lambda: MenuManager().go_to_screen("menu_when_login"))
 
         # Save the records to the database
+        log.debug("Saving records to database")
         SaveRecords().save_records()
 
         # Reset the times list in the global variables
+        log.debug("Resetting GlobalVariables.times_list")
         GlobalVariables.times_list = []
 
         menu.mainloop(WindowSettings.DISPLAY)
@@ -63,6 +71,7 @@ class ShowResultBoard:
         :return: Current times from the database.
         """
         records_database_path = ASSETS_DIR / "databases" / "records.db"
+        log.debug("Fetching current times for '%s' from DB: %s", GlobalVariables.nick, records_database_path)
         with sqlite3.connect(records_database_path) as conn:
             cursor = conn.cursor()
 
@@ -77,6 +86,9 @@ class ShowResultBoard:
             # Get current times
             cursor.execute(query, (nick,))
             current_times = cursor.fetchone()
+
+            if current_times is None:
+                log.warning("No current times found for user '%s'", nick)
 
             return current_times
 
@@ -95,8 +107,10 @@ class ShowResultBoard:
         for i, element in enumerate(times_list, start=1):
             if database_times_list[i - 1] is None or element < database_times_list[i - 1]:
                 # If the time is a new record, mark it as such
+                log.info("New record achieved on level %d: %s", i, convert_time(element))
                 result_string += f"Level{i} - {convert_time(element)}    NEW RECORD\n"
             else:
                 result_string += f"Level{i} - {convert_time(element)}\n"
 
+        log.debug("Result string created successfully")
         return result_string

@@ -1,9 +1,13 @@
 import sqlite3
+import logging
 
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 from mazegame.utils.paths.paths import base_dir
 
 ASSETS_DIR = base_dir() / "assets"
+
+log = logging.getLogger(__name__)
+
 
 class SaveRecords:
     """
@@ -19,6 +23,7 @@ class SaveRecords:
         records_database_path = ASSETS_DIR / "databases" / "records.db"
         self.conn = sqlite3.connect(records_database_path)
         self.cursor = self.conn.cursor()
+        log.debug("Connected to records database at %s", records_database_path)
 
     def save_records(self) -> None:
         """
@@ -32,18 +37,23 @@ class SaveRecords:
         :param: None
         :return: None
         """
+        log.info("Saving player records to database")
         # Retrieve the times_list(times of the current game) and the database_times (times from records database)
         times_list = GlobalVariables.times_list
         database_times = self.get_database_times()
+        log.debug("Loaded %d times from database and %d from session", len(database_times), len(times_list))
 
         # Create a new record list by comparing the database_times with the times_list
         new_times_list = self.create_new_record_list(times_list, database_times)
+        log.debug("Created new record list: %s", new_times_list)
 
         # Update the database with the new record list
         self.update_database(new_times_list)
+        log.info("Database updated successfully for player '%s'", GlobalVariables.nick)
 
         # Close the database connection
         self.conn.close()
+        log.debug("Database connection closed")
 
     def get_database_times(self) -> tuple:
         """
@@ -55,6 +65,7 @@ class SaveRecords:
         :param: None
         :return: The tuple containing times from the database.
         """
+        log.debug("Fetching database times for player '%s'", GlobalVariables.nick)
         # Retrieve necessary variables
         nick = GlobalVariables.nick
         level_numbers = GlobalVariables.number_of_levels
@@ -67,6 +78,7 @@ class SaveRecords:
         # Execute the SQL query and fetch the result
         self.cursor.execute(select_query, (nick,))
         database_times = self.cursor.fetchone()
+        log.debug("Database times retrieved: %s", database_times)
 
         return database_times
 
@@ -88,6 +100,7 @@ class SaveRecords:
 
         :return: The new record list (combined database_times and times_list)
         """
+        log.debug("Creating new record list from times_list=%s and database_times=%s", times_list, database_times)
         record_list = []
 
         # Compare each pair of times in the database_times and the times_list
@@ -103,6 +116,7 @@ class SaveRecords:
         remaining_records = database_times[len(times_list):]
         record_list.extend(remaining_records)
 
+        log.debug("New record list created: %s", record_list)
         return record_list
 
     def update_database(self, new_times_list: list) -> None:
@@ -116,6 +130,7 @@ class SaveRecords:
         :param new_times_list: The new times list (combined database_times and times_list)
         :return: None
         """
+        log.debug("Updating database for player '%s' with values: %s", GlobalVariables.nick, new_times_list)
         # Retrieve necessary variables
         nick = GlobalVariables.nick
         level_numbers = GlobalVariables.number_of_levels
@@ -129,5 +144,9 @@ class SaveRecords:
         values = new_times_list + [nick]
 
         # Execute SQL query
-        self.cursor.execute(query, values)
-        self.conn.commit()
+        try:
+            self.cursor.execute(query, values)
+            self.conn.commit()
+            log.info("Records updated successfully for '%s'", nick)
+        except Exception as ex:
+            log.warning("Failed to update records for '%s': %s", nick, ex)

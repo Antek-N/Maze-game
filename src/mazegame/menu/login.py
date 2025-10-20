@@ -1,4 +1,5 @@
 import sqlite3
+import logging
 
 import pygame_menu
 
@@ -10,7 +11,10 @@ from mazegame.utils.global_variables.global_variables import GlobalVariables
 
 from mazegame.utils.paths.paths import base_dir
 
+log = logging.getLogger(__name__)
+
 ASSETS_DIR = base_dir() / "assets"
+
 
 class Login:
     """
@@ -21,6 +25,7 @@ class Login:
     If the authentication is successful, it performs actions using the `login_success()` method.
     """
     def __init__(self) -> None:
+        log.info("Opening Login screen")
         self.login_screen()
 
     def login_screen(self, error_text="") -> None:
@@ -31,6 +36,7 @@ class Login:
         :param error_text: Error message to display on the screen. Defaults to ""
         :return: None
         """
+        log.debug("Initializing Login UI (has_error=%s)", bool(error_text))
         menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
                                 width=WindowSettings.DISPLAY_WIDTH,
                                 theme=WindowSettings.THEME,
@@ -54,18 +60,24 @@ class Login:
         :param password: The password entered by the user
         :return: None
         """
+        log.debug("Validating credentials for nick '%s'", nick)
         if not nick:
+            log.warning("Login validation failed: empty nick")
             self.login_screen('Field "Nick" is required')
             return
 
         if not password:
+            log.warning("Login validation failed for '%s': empty password", nick)
             self.login_screen('Field "Password" is required')
             return
 
         if self.authenticate(nick, password):
+            log.info("Login successful for '%s'", nick)
             self.login_success(nick)
         else:
+            log.warning("Login failed for '%s'", nick)
             self.login_screen("Incorrect nick or password")
+
 
     @staticmethod
     def authenticate(nick: str, password: str) -> bool:
@@ -80,6 +92,7 @@ class Login:
         params = (nick, password)
 
         ac_database_path = ASSETS_DIR / "databases" / "accounts.db"
+        log.debug("Authenticating user '%s' against DB: %s", nick, ac_database_path)
         with sqlite3.connect(ac_database_path) as conn:
             c = conn.cursor()
             c.execute(query, params)
@@ -93,6 +106,7 @@ class Login:
         :param nick: The nick entered by the user
         :return: None
         """
+        log.info("Post-login actions for '%s'", nick)
         GlobalVariables.nick = nick
         RecordsDatabase().check_and_adjust_columns_number()
         MenuManager().go_to_screen("menu_when_login")

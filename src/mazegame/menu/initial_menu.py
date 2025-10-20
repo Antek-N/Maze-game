@@ -1,8 +1,10 @@
 import pygame_menu
+import logging
 
 from mazegame.menu.window_settings import WindowSettings
 from mazegame.menu.menu_manager.menu_manager import MenuManager
 
+log = logging.getLogger(__name__)
 
 class InitialMenu:
     """
@@ -12,6 +14,7 @@ class InitialMenu:
     It uses the `pygame_menu` library to create a menu with buttons for these options.
     """
     def __init__(self) -> None:
+        log.info("Opening Initial Menu screen")
         self.initial_menu()
 
     @staticmethod
@@ -22,6 +25,7 @@ class InitialMenu:
         :param: None
         :return: None
         """
+        log.debug("Initializing Initial Menu UI")
         menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
                                 width=WindowSettings.DISPLAY_WIDTH,
                                 theme=WindowSettings.THEME,

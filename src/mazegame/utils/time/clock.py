@@ -1,4 +1,7 @@
 import time
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class Clock:
@@ -9,6 +12,7 @@ class Clock:
         self.start_time = None
         self.elapsed_time = 0.0
         self.is_running = False
+        log.debug("Clock instance created")
 
     def start_clock(self) -> None:
         """
@@ -19,6 +23,7 @@ class Clock:
         """
         self.start_time = time.time()
         self.is_running = True
+        log.info("Clock started at %.3f", self.start_time)
 
     def stop_clock(self) -> None:
         """
@@ -28,6 +33,7 @@ class Clock:
         :return: None
         """
         self.is_running = False
+        log.info("Clock stopped at elapsed time %.3f", self.elapsed_time)
 
     def reset_and_stop_clock(self) -> None:
         """
@@ -39,6 +45,7 @@ class Clock:
         self.start_time = None
         self.elapsed_time = 0.0
         self.is_running = False
+        log.info("Clock reset and stopped")
 
     def update(self) -> None:
         """

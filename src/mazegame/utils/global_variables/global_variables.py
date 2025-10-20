@@ -1,7 +1,5 @@
 from mazegame.maze_creator.get_number_of_levels import GetNumberOfLevels
-
 from mazegame.player.player import Player
-
 from mazegame.utils.time import clock
 
 
@@ -21,13 +19,14 @@ class GlobalVariables:
     :cvar int number_of_levels: The number of levels in the game.
     :cvar pygame.font.Font font_type: The font type used in the game.
     """
+
     nick = ""
     display = None
     level = None
     current_level_number = 0
     counter_of_loses = 0
-    collision_list = []
-    times_list = []
+    collision_list: list[tuple[float, float, float, float]] = []
+    times_list: list[float] = []
     clock_instance = clock.Clock()
     player_instance = Player()
     number_of_levels = GetNumberOfLevels.get_number()

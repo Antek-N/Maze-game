@@ -1,10 +1,9 @@
-import time
 import logging
+import time
 
 import pygame
 
 from mazegame.menu.menu_manager.menu_manager import MenuManager
-
 from mazegame.utils.gameplay.open_new_level import OpenNewLevel
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 
@@ -18,6 +17,7 @@ class FinishHandling:
     This class checks if the player is out of maze bounds (if the player has
     finished the game) and performs actions accordingly.
     """
+
     def finish_handling(self) -> None:
         """
         Handles the finish of a level by checking if the player is out of bounds and performing actions accordingly.
@@ -37,8 +37,8 @@ class FinishHandling:
         display_height = display_info.current_h
 
         # Get maze dimensions
-        maze_width = level['maze_width']
-        maze_height = level['maze_height']
+        maze_width = level["maze_width"]
+        maze_height = level["maze_height"]
 
         # Calculate display and maze offsets
         x_offset = (display_width - maze_width * 50) / 2
@@ -49,10 +49,11 @@ class FinishHandling:
 
         # Check if player is out of bounds
         is_player_out_of_bounds = (
-                player_x <= 0 + x_offset
-                or player_x >= maze_width * 50 - 10 + x_offset
-                or player_y >= maze_height * 50 - 10 + y_offset
-                or player_y <= 0 + y_offset)
+            player_x <= 0 + x_offset
+            or player_x >= maze_width * 50 - 10 + x_offset
+            or player_y >= maze_height * 50 - 10 + y_offset
+            or player_y <= 0 + y_offset
+        )
 
         if is_player_out_of_bounds:
             log.info("Player exited maze bounds at level %d", current_level_number)

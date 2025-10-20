@@ -1,10 +1,11 @@
-import pygame
 import logging
+
+import pygame
 
 log = logging.getLogger(__name__)
 
 
-def create_display():
+def create_display() -> pygame.Surface:
     """
     Creates a Pygame display object with the current display resolution.
 

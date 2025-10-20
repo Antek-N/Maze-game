@@ -1,5 +1,5 @@
-import time
 import logging
+import time
 
 log = logging.getLogger(__name__)
 
@@ -8,8 +8,9 @@ class Clock:
     """
     A class representing the game clock.
     """
+
     def __init__(self) -> None:
-        self.start_time = None
+        self.start_time: float | None = None
         self.elapsed_time = 0.0
         self.is_running = False
         log.debug("Clock instance created")

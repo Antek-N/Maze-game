@@ -1,4 +1,6 @@
 import logging
+from collections.abc import Callable
+from typing import Any
 
 log = logging.getLogger(__name__)
 
@@ -11,8 +13,9 @@ class MenuManager:
     :cvar list stack: A list representing the screen navigation stack.
     :cvar dict screens: A dictionary containing screen classes. It is initialized in the set_screens.py file.
     """
+
     stack = ["previous_screen", "current_screen"]
-    screens = {}
+    screens: dict[str, Callable[[], Any]] = {}
 
     def go_to_screen(self, screen: str) -> None:
         """

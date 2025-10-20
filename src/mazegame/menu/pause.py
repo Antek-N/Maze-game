@@ -1,11 +1,11 @@
-import pygame_menu
 import logging
 
-from mazegame.menu.window_settings import WindowSettings
-from mazegame.menu.menu_manager.menu_manager import MenuManager
+import pygame_menu
 
-from mazegame.utils.global_variables.global_variables import GlobalVariables
+from mazegame.menu.menu_manager.menu_manager import MenuManager
+from mazegame.menu.window_settings import WindowSettings
 from mazegame.utils.gameplay.start_game import Game
+from mazegame.utils.global_variables.global_variables import GlobalVariables
 
 log = logging.getLogger(__name__)
 
@@ -17,6 +17,7 @@ class Pause:
     This class displays the pause menu when the player clicks the 'ESC' key during the game to pause it.
     The pause menu offers options to play again or go back to the main menu.
     """
+
     def __init__(self) -> None:
         log.info("Opening Pause menu")
         self.pause()
@@ -30,13 +31,15 @@ class Pause:
         :return: None
         """
         log.debug("Initializing Pause menu UI")
-        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
-                                width=WindowSettings.DISPLAY_WIDTH,
-                                theme=WindowSettings.THEME,
-                                title='Pause')
+        menu = pygame_menu.Menu(
+            height=WindowSettings.DISPLAY_HEIGHT,
+            width=WindowSettings.DISPLAY_WIDTH,
+            theme=WindowSettings.THEME,
+            title="Pause",
+        )
 
-        menu.add.button('Play again', lambda: self.play_again())
-        menu.add.button('Back to menu', lambda: self.show_results())
+        menu.add.button("Play again", lambda: self.play_again())
+        menu.add.button("Back to menu", lambda: self.show_results())
 
         menu.mainloop(WindowSettings.DISPLAY)
 

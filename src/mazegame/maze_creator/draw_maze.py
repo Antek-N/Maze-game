@@ -1,14 +1,17 @@
-import pygame
 import logging
 
+import pygame
+
 log = logging.getLogger(__name__)
+
 
 class DrawMaze:
     """
     A class that provides a method to draw a maze on a given Pygame display surface.
     """
+
     @staticmethod
-    def draw_maze(display, maze: list, maze_color: tuple, maze_width: int, maze_height: int) -> None:
+    def draw_maze(display: pygame.Surface, maze: list, maze_color: tuple, maze_width: int, maze_height: int) -> None:
         """
         Draws the maze on the display.
 
@@ -23,11 +26,11 @@ class DrawMaze:
 
         # Get display resolution
         display_resolution = pygame.display.Info()
-        display_width, display_height = display_resolution.current_w, display_resolution.current_h
+        display_width_full, display_height_full = display_resolution.current_w, display_resolution.current_h
 
         # Calculate display offsets to center the maze
-        display_width = (display_width - maze_width * 50) / 2
-        display_height = (display_height - maze_height * 50) / 2
+        display_offset_x = (display_width_full - maze_width * 50) / 2
+        display_offset_y = (display_height_full - maze_height * 50) / 2
 
         # Iterate over maze coordinates
         for y in range(maze_height):
@@ -35,7 +38,6 @@ class DrawMaze:
                 # Check if maze cell is a wall (value of 1)
                 if maze[y * maze_width + x] == 1:
                     # Calculate rectangle layout for wall cell
-                    rect_layout = (x * 50 + display_width, y * 50 + display_height, 50, 50)
+                    rect_layout = (x * 50 + display_offset_x, y * 50 + display_offset_y, 50, 50)
                     # Draw the wall cell on the display
                     pygame.draw.rect(display, maze_color, rect_layout)
-

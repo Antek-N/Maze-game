@@ -1,9 +1,10 @@
 import logging
+
 import pygame
 
-from mazegame.menu.window_settings import WindowSettings
 from mazegame.menu.menu_manager.menu_manager import MenuManager
 from mazegame.menu.menu_manager.set_screens import SetScreens
+from mazegame.menu.window_settings import WindowSettings
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 
 log = logging.getLogger(__name__)

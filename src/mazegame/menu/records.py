@@ -1,20 +1,18 @@
-import sqlite3
 import logging
-from typing import Union
+import sqlite3
 
 import pygame_menu
 
-from mazegame.menu.window_settings import WindowSettings
 from mazegame.menu.menu_manager.menu_manager import MenuManager
-
-from mazegame.utils.time.convert_time import convert_time
+from mazegame.menu.window_settings import WindowSettings
 from mazegame.utils.global_variables.global_variables import GlobalVariables
-
 from mazegame.utils.paths.paths import base_dir
+from mazegame.utils.time.convert_time import convert_time
 
 log = logging.getLogger(__name__)
 
 ASSETS_DIR = base_dir() / "assets"
+
 
 class MainRecords:
     """
@@ -22,6 +20,7 @@ class MainRecords:
 
     This class displays the main record screen with buttons leading to the `MyRecords` and `GlobalRecords` screens.
     """
+
     def __init__(self) -> None:
         log.info("Opening Main Records screen")
         self.main_records_screen()
@@ -35,14 +34,16 @@ class MainRecords:
         :return: None
         """
         log.debug("Initializing Main Records UI")
-        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
-                                width=WindowSettings.DISPLAY_WIDTH,
-                                theme=WindowSettings.THEME,
-                                title='Records')
+        menu = pygame_menu.Menu(
+            height=WindowSettings.DISPLAY_HEIGHT,
+            width=WindowSettings.DISPLAY_WIDTH,
+            theme=WindowSettings.THEME,
+            title="Records",
+        )
 
-        menu.add.button('My records', lambda: MenuManager().go_to_screen('my_records'))
-        menu.add.button('Global records', lambda: MenuManager().go_to_screen('global_records'))
-        menu.add.button('Back', lambda: MenuManager().go_to_screen('menu_when_login'))
+        menu.add.button("My records", lambda: MenuManager().go_to_screen("my_records"))
+        menu.add.button("Global records", lambda: MenuManager().go_to_screen("global_records"))
+        menu.add.button("Back", lambda: MenuManager().go_to_screen("menu_when_login"))
 
         menu.mainloop(WindowSettings.DISPLAY)
 
@@ -54,7 +55,8 @@ class MyRecords:
     This class displays the screen with the user's records.
     The user's records are retrieved from the database and displayed as a formatted string.
     """
-    def __init__(self):
+
+    def __init__(self) -> None:
         log.info("Opening My Records screen for '%s'", GlobalVariables.nick)
         self.my_records_screen()
 
@@ -68,21 +70,23 @@ class MyRecords:
         :param: None
         :return: None
         """
-        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
-                                width=WindowSettings.DISPLAY_WIDTH,
-                                theme=WindowSettings.THEME,
-                                title='My records')
+        menu = pygame_menu.Menu(
+            height=WindowSettings.DISPLAY_HEIGHT,
+            width=WindowSettings.DISPLAY_WIDTH,
+            theme=WindowSettings.THEME,
+            title="My records",
+        )
 
         database_times = self.get_database_times()
         record_string = self.create_record_string(database_times)
         menu.add.label(record_string, font_size=25, font_color=(40, 40, 40))
 
-        menu.add.button('Back', lambda: MenuManager().go_to_previous_screen())
+        menu.add.button("Back", lambda: MenuManager().go_to_previous_screen())
 
         menu.mainloop(WindowSettings.DISPLAY)
 
     @staticmethod
-    def get_database_times() -> tuple:
+    def get_database_times() -> tuple | None:
         """
         Retrieves the user's record times from the database.
 
@@ -111,7 +115,7 @@ class MyRecords:
         return database_times
 
     @staticmethod
-    def create_record_string(database_times_list: Union[tuple, list]) -> str:
+    def create_record_string(database_times_list: tuple | list | None) -> str:
         """
         Creates a formatted string from the database record times.
 
@@ -123,6 +127,13 @@ class MyRecords:
         """
         record_string = ""
         number_of_levels = GlobalVariables.number_of_levels
+
+        # Handle the case where no records exist at all (database_times_list is None)
+        if database_times_list is None:
+            log.warning("database_times_list is None (no records found), creating empty string")
+            for i in range(number_of_levels):
+                record_string += f"Level{i + 1} - None\n"
+            return record_string
 
         # Iterate over each level
         for i in range(number_of_levels):
@@ -144,6 +155,7 @@ class GlobalRecords:
     This class displays the screen with the global records.
     The global records are retrieved from the database and displayed as a formatted string.
     """
+
     def __init__(self) -> None:
         log.info("Opening Global Records screen")
         self.global_records_screen()
@@ -159,15 +171,17 @@ class GlobalRecords:
         :return: None
         """
         log.debug("Initializing Global Records UI")
-        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
-                                width=WindowSettings.DISPLAY_WIDTH,
-                                theme=WindowSettings.THEME,
-                                title='Global records')
+        menu = pygame_menu.Menu(
+            height=WindowSettings.DISPLAY_HEIGHT,
+            width=WindowSettings.DISPLAY_WIDTH,
+            theme=WindowSettings.THEME,
+            title="Global records",
+        )
 
         record_string = self.create_record_string()
         menu.add.label(record_string, font_size=25, font_color=(40, 40, 40))
 
-        menu.add.button('Back', lambda: MenuManager().go_to_previous_screen())
+        menu.add.button("Back", lambda: MenuManager().go_to_previous_screen())
 
         menu.mainloop(WindowSettings.DISPLAY)
 
@@ -208,6 +222,8 @@ class GlobalRecords:
         log.debug("Collected best times for %d levels, %d entries found", number_of_levels, len(best_times))
 
         # Create a formatted string representation of the best records
-        record_string = "\n".join([f"Level{level} - {convert_time(score)} - {nick}" for level, score, nick in best_times])
+        record_string = "\n".join(
+            [f"Level{level} - {convert_time(score)} - {nick}" for level, score, nick in best_times]
+        )
 
         return record_string

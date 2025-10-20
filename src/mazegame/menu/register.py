@@ -1,12 +1,10 @@
-import sqlite3
 import logging
-from typing import Union
+import sqlite3
 
 import pygame_menu
 
-from mazegame.menu.window_settings import WindowSettings
 from mazegame.menu.menu_manager.menu_manager import MenuManager
-
+from mazegame.menu.window_settings import WindowSettings
 from mazegame.utils.databases.records_database import RecordsDatabase
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 from mazegame.utils.paths.paths import base_dir
@@ -15,16 +13,18 @@ log = logging.getLogger(__name__)
 
 ASSETS_DIR = base_dir() / "assets"
 
+
 class Register:
     """
     A class that defines the registration screen for the game menu.
 
     This class displays the registration screen and handles the user registration process.
     """
+
     def __init__(self) -> None:
         self.register_screen()
 
-    def register_screen(self, error_text="") -> None:
+    def register_screen(self, error_text: str = "") -> None:
         """
         Displays the registration screen.
         (main method of the class)
@@ -33,27 +33,33 @@ class Register:
         :return: None
         """
         log.debug("Initializing Register UI (has_error=%s)", bool(error_text))
-        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
-                                width=WindowSettings.DISPLAY_WIDTH,
-                                theme=WindowSettings.THEME,
-                                title='Sign up')
+        menu = pygame_menu.Menu(
+            height=WindowSettings.DISPLAY_HEIGHT,
+            width=WindowSettings.DISPLAY_WIDTH,
+            theme=WindowSettings.THEME,
+            title="Sign up",
+        )
 
         menu.add.label(error_text, font_size=15, font_color=(200, 0, 0))
 
-        nick_field = menu.add.text_input('nick: ', maxchar=16)
-        password_field = menu.add.text_input('Password: ', maxchar=32, password=True)
-        repeat_password_field = menu.add.text_input('Repeat password: ', maxchar=32, password=True)
+        nick_field = menu.add.text_input("nick: ", maxchar=16)
+        password_field = menu.add.text_input("Password: ", maxchar=32, password=True)
+        repeat_password_field = menu.add.text_input("Repeat password: ", maxchar=32, password=True)
 
-        menu.add.button('Continue', lambda: self.apply_register(nick_field.get_value(), password_field.get_value(),
-                                                                repeat_password_field.get_value()))
-        menu.add.button('Back', lambda: MenuManager().go_to_previous_screen())
+        menu.add.button(
+            "Continue",
+            lambda: self.apply_register(
+                nick_field.get_value(), password_field.get_value(), repeat_password_field.get_value()
+            ),
+        )
+        menu.add.button("Back", lambda: MenuManager().go_to_previous_screen())
 
         menu.mainloop(WindowSettings.DISPLAY)
 
     def apply_register(self, nick: str, password: str, repeated_password: str) -> None:
         """
         Applies the registration process.
-        
+
         :param nick: The nick entered by the user
         :param password: The password entered by the user
         :param repeated_password: The repeated password entered by the user
@@ -78,7 +84,7 @@ class Register:
     def validate_data(self, nick: str, password: str, repeated_password: str) -> bool:
         """
         Validates the user input data for registration.
-        
+
         :param nick: The nick entered by the user
         :param password: The password entered by the user
         :param repeated_password: The repeated password entered by the user
@@ -101,7 +107,7 @@ class Register:
 
         if len(password) <= 4:
             log.warning("Registration validation failed for '%s': password too short", nick)
-            self.register_screen('Password must be at least 5 characters long')
+            self.register_screen("Password must be at least 5 characters long")
             return False
 
         if password != repeated_password:
@@ -111,7 +117,7 @@ class Register:
 
         if self.check_account_exists(nick):
             log.info("Registration blocked: user '%s' already exists", nick)
-            self.register_screen('User already exists')
+            self.register_screen("User already exists")
             return False
 
         return True
@@ -159,8 +165,9 @@ class Register:
         number_of_levels = GlobalVariables.number_of_levels
 
         records_database_path = ASSETS_DIR / "databases" / "records.db"
-        log.debug("Inserting default records for '%s' (%d levels) into DB: %s",
-                  nick, number_of_levels, records_database_path)
+        log.debug(
+            "Inserting default records for '%s' (%d levels) into DB: %s", nick, number_of_levels, records_database_path
+        )
         with sqlite3.connect(records_database_path) as conn:
             c = conn.cursor()
 

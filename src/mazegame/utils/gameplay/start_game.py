@@ -1,12 +1,13 @@
-import pygame
 import logging
 
-from mazegame.utils.gameplay.events_handling import EventsHandling
+import pygame
+
 from mazegame.utils.collisions.collision_handling import CollisionHandling
-from mazegame.utils.display.render_display import RenderDisplay
-from mazegame.utils.gameplay.open_new_level import OpenNewLevel
-from mazegame.utils.gameplay.finish_handling import FinishHandling
 from mazegame.utils.display.create_display import create_display
+from mazegame.utils.display.render_display import RenderDisplay
+from mazegame.utils.gameplay.events_handling import EventsHandling
+from mazegame.utils.gameplay.finish_handling import FinishHandling
+from mazegame.utils.gameplay.open_new_level import OpenNewLevel
 from mazegame.utils.global_variables.global_variables import GlobalVariables
 from mazegame.utils.paths.paths import base_dir
 
@@ -24,6 +25,7 @@ class Game:
     It initializes the basic settings and variables, creates the display, sets the font type,
     and opens the first level. The main game loop is executed continuously until the game is exited.
     """
+
     @staticmethod
     def on_execute() -> None:
         """

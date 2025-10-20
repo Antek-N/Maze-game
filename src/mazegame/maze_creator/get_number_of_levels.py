@@ -1,5 +1,6 @@
-from mazegame.maze_creator.levels import Levels
 import logging
+
+from mazegame.maze_creator.levels import Levels
 
 log = logging.getLogger(__name__)
 
@@ -8,6 +9,7 @@ class GetNumberOfLevels:
     """
     A class that provides a method to get the number of levels available in a game.
     """
+
     @staticmethod
     def get_number() -> int:
         """

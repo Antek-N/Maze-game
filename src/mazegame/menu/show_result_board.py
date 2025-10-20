@@ -1,20 +1,19 @@
-import sqlite3
 import logging
+import sqlite3
 
 import pygame_menu
 
 from mazegame.menu.menu_manager.menu_manager import MenuManager
 from mazegame.menu.window_settings import WindowSettings
-
 from mazegame.utils.global_variables.global_variables import GlobalVariables
-from mazegame.utils.time.convert_time import convert_time
-from mazegame.utils.save_records.save_records import SaveRecords
-
 from mazegame.utils.paths.paths import base_dir
+from mazegame.utils.save_records.save_records import SaveRecords
+from mazegame.utils.time.convert_time import convert_time
 
 log = logging.getLogger(__name__)
 
 ASSETS_DIR = base_dir() / "assets"
+
 
 class ShowResultBoard:
     """
@@ -22,6 +21,7 @@ class ShowResultBoard:
 
     This class displays the result board screen, which shows the player's results from the current gameplay.
     """
+
     def __init__(self) -> None:
         log.info("Opening Result Board screen")
         self.result_board()
@@ -36,10 +36,12 @@ class ShowResultBoard:
         :return: None
         """
         log.debug("Initializing Result Board UI")
-        menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
-                                width=WindowSettings.DISPLAY_WIDTH,
-                                theme=WindowSettings.THEME,
-                                title='Result board')
+        menu = pygame_menu.Menu(
+            height=WindowSettings.DISPLAY_HEIGHT,
+            width=WindowSettings.DISPLAY_WIDTH,
+            theme=WindowSettings.THEME,
+            title="Result board",
+        )
 
         result_string = self.create_result_string()
 
@@ -50,7 +52,7 @@ class ShowResultBoard:
             log.info("No results to display on Result Board")
             menu.add.label("You have no results\n", font_size=25, font_color=(255, 0, 0))
 
-        menu.add.button('Continue', lambda: MenuManager().go_to_screen("menu_when_login"))
+        menu.add.button("Continue", lambda: MenuManager().go_to_screen("menu_when_login"))
 
         # Save the records to the database
         log.debug("Saving records to database")

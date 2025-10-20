@@ -1,4 +1,5 @@
 import time
+import logging
 
 import pygame
 
@@ -6,6 +7,8 @@ from mazegame.menu.menu_manager.menu_manager import MenuManager
 
 from mazegame.utils.gameplay.open_new_level import OpenNewLevel
 from mazegame.utils.global_variables.global_variables import GlobalVariables
+
+log = logging.getLogger(__name__)
 
 
 class FinishHandling:
@@ -52,16 +55,19 @@ class FinishHandling:
                 or player_y <= 0 + y_offset)
 
         if is_player_out_of_bounds:
+            log.info("Player exited maze bounds at level %d", current_level_number)
             if current_level_number < number_of_levels:
                 # If the current level is not the last level in the game
                 time.sleep(0.4)
                 self.open_new_level()
                 self.append_time_and_reset_clock()
+                log.info("Proceeding to next level (%d -> %d)", current_level_number, current_level_number + 1)
             else:
                 # If the current level is the last level in the game
                 time.sleep(0.4)
                 self.append_time_and_reset_clock()
                 self.reset_current_level_and_show_result_board()
+                log.info("Last level finished — showing result board")
 
     @staticmethod
     def open_new_level() -> None:
@@ -71,6 +77,7 @@ class FinishHandling:
         :param: None
         :return: None
         """
+        log.debug("Opening new level")
         OpenNewLevel().open_new_level()
 
     @staticmethod
@@ -81,8 +88,10 @@ class FinishHandling:
         :param: None
         :return: None
         """
+        log.debug("Appending current time and resetting clock")
         GlobalVariables.times_list.append(GlobalVariables.clock_instance.get_time())
         GlobalVariables.clock_instance.reset_and_stop_clock()
+        log.debug("Time appended (total records: %d)", len(GlobalVariables.times_list))
 
     @staticmethod
     def reset_current_level_and_show_result_board() -> None:
@@ -92,5 +101,6 @@ class FinishHandling:
         :param: None
         :return: None
         """
+        log.debug("Resetting level counter and showing result board")
         GlobalVariables.current_level_number = 0
         MenuManager().go_to_screen("show_result_board")

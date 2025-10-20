@@ -12,6 +12,8 @@ from mazegame.utils.global_variables.global_variables import GlobalVariables
 
 from mazegame.utils.paths.paths import base_dir
 
+log = logging.getLogger(__name__)
+
 ASSETS_DIR = base_dir() / "assets"
 
 class MainRecords:
@@ -21,6 +23,7 @@ class MainRecords:
     This class displays the main record screen with buttons leading to the `MyRecords` and `GlobalRecords` screens.
     """
     def __init__(self) -> None:
+        log.info("Opening Main Records screen")
         self.main_records_screen()
 
     @staticmethod
@@ -31,6 +34,7 @@ class MainRecords:
         :param: None
         :return: None
         """
+        log.debug("Initializing Main Records UI")
         menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
                                 width=WindowSettings.DISPLAY_WIDTH,
                                 theme=WindowSettings.THEME,
@@ -51,6 +55,7 @@ class MyRecords:
     The user's records are retrieved from the database and displayed as a formatted string.
     """
     def __init__(self):
+        log.info("Opening My Records screen for '%s'", GlobalVariables.nick)
         self.my_records_screen()
 
     def my_records_screen(self) -> None:
@@ -94,10 +99,14 @@ class MyRecords:
 
         # Get record times
         records_database_path = ASSETS_DIR / "databases" / "records.db"
+        log.debug("Fetching records for '%s' from DB: %s", nick, records_database_path)
         with sqlite3.connect(records_database_path) as conn:
             cursor = conn.cursor()
             cursor.execute(select_query, (nick,))
             database_times = cursor.fetchone()
+
+        if database_times is None:
+            log.info("No records found for '%s'", nick)
 
         return database_times
 
@@ -123,7 +132,7 @@ class MyRecords:
             except Exception as ex:
                 # If an exception occurs, there is no record time for the level
                 record_string += f"Level{i + 1} - None\n"
-                logging.warning(f"No data in the database - {ex}")
+                log.warning("No data in the database - %s", ex)
 
         return record_string
 
@@ -136,6 +145,7 @@ class GlobalRecords:
     The global records are retrieved from the database and displayed as a formatted string.
     """
     def __init__(self) -> None:
+        log.info("Opening Global Records screen")
         self.global_records_screen()
 
     def global_records_screen(self) -> None:
@@ -148,6 +158,7 @@ class GlobalRecords:
         :param: None
         :return: None
         """
+        log.debug("Initializing Global Records UI")
         menu = pygame_menu.Menu(height=WindowSettings.DISPLAY_HEIGHT,
                                 width=WindowSettings.DISPLAY_WIDTH,
                                 theme=WindowSettings.THEME,
@@ -175,6 +186,8 @@ class GlobalRecords:
 
         # Connect to the database
         records_database_path = ASSETS_DIR / "databases" / "records.db"
+        log.debug("Building global best times from DB: %s", records_database_path)
+
         with sqlite3.connect(records_database_path) as conn:
             cursor = conn.cursor()
             best_times = []
@@ -191,6 +204,8 @@ class GlobalRecords:
                     nick, time = time_and_nick
                     # Add the best record for the current level to the list
                     best_times.append((level, time, nick))
+
+        log.debug("Collected best times for %d levels, %d entries found", number_of_levels, len(best_times))
 
         # Create a formatted string representation of the best records
         record_string = "\n".join([f"Level{level} - {convert_time(score)} - {nick}" for level, score, nick in best_times])

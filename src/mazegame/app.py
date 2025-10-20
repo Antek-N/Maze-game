@@ -21,9 +21,17 @@ class App:
     @staticmethod
     def _initialize_game() -> None:
         """Initialize window settings, screens, globals, and launch the menu."""
+        log.info("Initializing DotMaze environment")
         WindowSettings().initialize_settings()
+        log.debug("Window settings initialized")
+
         SetScreens.set_screens()
+        log.debug("Screens registered")
+
         GlobalVariables()
+        log.debug("Global variables initialized")
+
+        log.info("Launching initial menu screen")
         MenuManager().go_to_screen("initial_menu")
 
     def run(self) -> int:

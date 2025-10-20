@@ -1,3 +1,8 @@
+import logging
+
+log = logging.getLogger(__name__)
+
+
 class Player:
     """
     A class representing a player in the game.
@@ -12,6 +17,7 @@ class Player:
         self.x = 0  # x start location
         self.y = 0  # y start location
         self.speed_of_movement = 1.45
+        log.info("Player initialized at position (%.2f, %.2f) with speed %.2f", self.x, self.y, self.speed_of_movement)
 
     # Control settings
     def move_right(self) -> None:

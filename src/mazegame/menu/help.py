@@ -1,7 +1,10 @@
 import pygame_menu
+import logging
 
 from mazegame.menu.window_settings import WindowSettings
 from mazegame.menu.menu_manager.menu_manager import MenuManager
+
+log = logging.getLogger(__name__)
 
 
 class Help:
@@ -12,6 +15,7 @@ class Help:
     `pygame_menu` library to create a menu with a help message and a "Back" button.
     """
     def __init__(self) -> None:
+        log.info("Opening Help screen")
         self.help()
 
     @staticmethod
@@ -22,6 +26,7 @@ class Help:
         :param: None
         :return: None
         """
+        log.debug("Initializing Help menu UI")
         help_message = """
         1. To control use arrows or WASD
         2. To pause game, click ESC button

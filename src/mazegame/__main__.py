@@ -4,6 +4,8 @@ import sys
 from app import App
 from logging_config import configure_logging
 
+log = logging.getLogger(__name__)
+
 
 def main() -> int:
     """
@@ -12,12 +14,19 @@ def main() -> int:
     - start the game
     - return exit code
     """
-    configure_logging()
-    log = logging.getLogger(__name__)
-    log.debug("Logging configured")
+    try:
+        configure_logging()
+        log.debug("Logging configured successfully")
 
-    log.info("Launching DotMaze")
-    return App().run()
+        log.info("Launching DotMaze")
+        exit_code = App().run()
+
+        log.info("Exited with code %s", exit_code)
+        return exit_code
+
+    except Exception as ex:
+        log.exception("Unhandled exception occurred during game execution: %s", ex)
+        return 1
 
 
 if __name__ == "__main__":

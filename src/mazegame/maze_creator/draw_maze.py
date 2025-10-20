@@ -1,5 +1,7 @@
 import pygame
+import logging
 
+log = logging.getLogger(__name__)
 
 class DrawMaze:
     """
@@ -18,6 +20,7 @@ class DrawMaze:
 
         :return: None
         """
+
         # Get display resolution
         display_resolution = pygame.display.Info()
         display_width, display_height = display_resolution.current_w, display_resolution.current_h
@@ -35,3 +38,4 @@ class DrawMaze:
                     rect_layout = (x * 50 + display_width, y * 50 + display_height, 50, 50)
                     # Draw the wall cell on the display
                     pygame.draw.rect(display, maze_color, rect_layout)
+

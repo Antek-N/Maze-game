@@ -5,7 +5,10 @@ from mazegame.utils.global_variables.global_variables import GlobalVariables
 
 from mazegame.utils.paths.paths import base_dir
 
+log = logging.getLogger(__name__)
+
 ASSETS_DIR = base_dir() / "assets"
+
 
 class RecordsDatabase:
     """
@@ -17,9 +20,11 @@ class RecordsDatabase:
     """
     def __init__(self) -> None:
         records_database_path = ASSETS_DIR / "databases" / "records.db"
+        log.debug("Connecting to records database: %s", records_database_path)
         self.conn = sqlite3.connect(records_database_path)
         self.cursor = self.conn.cursor()
         self.number_of_levels = GlobalVariables.number_of_levels
+        log.info("RecordsDatabase initialized (expected levels: %d)", self.number_of_levels)
 
     def check_and_adjust_columns_number(self) -> None:
         """
@@ -33,14 +38,20 @@ class RecordsDatabase:
         :param: None
         :return: None
         """
+        log.debug("Checking and adjusting number of level columns in records table")
         # Check the number of level columns in the records table
         actual_num_levels = len(self.get_existing_columns_names()[1:])  # [1:] because the first column is a "nick"
+        log.debug("Found %d level columns (expected %d)", actual_num_levels, self.number_of_levels)
 
         # Compare with the expected number of columns
         if actual_num_levels < self.number_of_levels:
+            log.info("Creating %d missing columns", self.number_of_levels - actual_num_levels)
             self.create_missing_columns()
         elif actual_num_levels > self.number_of_levels:
+            log.info("Removing %d excess columns", actual_num_levels - self.number_of_levels)
             self.remove_excess_columns()
+        else:
+            log.debug("Column count is correct (%d levels)", actual_num_levels)
 
     def get_existing_columns_names(self) -> list:
         """
@@ -53,16 +64,12 @@ class RecordsDatabase:
         query = f"PRAGMA table_info({'records'})"
         self.cursor.execute(query)
         columns = [column[1] for column in self.cursor.fetchall()]
+        log.debug("Existing columns: %s", columns)
         return columns
 
     def create_missing_columns(self) -> None:
         """
         Creates missing columns in the records table.
-
-        Checks for missing level columns and adds them to the table.
-
-        :param: None
-        :return: None
         """
         # Get existing columns
         existing_columns = self.get_existing_columns_names()
@@ -74,6 +81,8 @@ class RecordsDatabase:
             if column_name not in existing_columns:
                 missing_columns.append(column_name)
 
+        log.debug("Missing columns to add: %s", missing_columns)
+
         # Add missing columns
         for column in missing_columns:
             self.add_column(column)
@@ -81,26 +90,20 @@ class RecordsDatabase:
     def add_column(self, column_to_add_name: str) -> None:
         """
         Adds a new column to the records table.
-
-        :param column_to_add_name: The name of the column to be added
-        :return: None
         """
         try:
             # Add a new column to the table
+            log.debug("Adding column '%s' to records table", column_to_add_name)
             query = f"ALTER TABLE {'records'} ADD COLUMN {column_to_add_name}"
             self.cursor.execute(query)
             self.conn.commit()
+            log.info("Column '%s' added successfully", column_to_add_name)
         except Exception as ex:
-            logging.warning(ex)
+            log.warning("Failed to add column '%s': %s", column_to_add_name, ex)
 
     def remove_excess_columns(self) -> None:
         """
         Removes excess columns from the records table.
-
-        Checks for excess columns and removes them from the table.
-
-        :param: None
-        :return: None
         """
         # Get existing columns
         existing_columns = self.get_existing_columns_names()[1:]  # [1:] because the first column is a "nick"
@@ -111,6 +114,8 @@ class RecordsDatabase:
             if int(column[len('level'):]) > self.number_of_levels:
                 excess_columns.append(column)
 
+        log.debug("Excess columns to remove: %s", excess_columns)
+
         # Remove excess columns
         for column in excess_columns:
             self.remove_column(column)
@@ -118,13 +123,9 @@ class RecordsDatabase:
     def remove_column(self, excess_column_name: str) -> None:
         """
         Removes a column from the records table.
-
-        Creates a new tabel without excess_column_name -> deletes the old table -> renames the new table to the old name
-
-        :param excess_column_name: The name of the column to be removed
-        :return: None
         """
         try:
+            log.debug("Removing column '%s' from records table", excess_column_name)
             # Get existing columns
             existing_columns = self.get_existing_columns_names()
 
@@ -148,7 +149,9 @@ class RecordsDatabase:
             query = f"ALTER TABLE new_{'records'} RENAME TO {'records'}"
             self.cursor.execute(query)
 
+            log.info("Column '%s' removed successfully", excess_column_name)
+
         except Exception as ex:
-            logging.warning(ex)
+            log.warning("Failed to remove column '%s': %s", excess_column_name, ex)
 
         self.conn.commit()

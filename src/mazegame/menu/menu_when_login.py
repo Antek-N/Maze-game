@@ -1,9 +1,12 @@
 import pygame_menu
+import logging
 
 from mazegame.menu.window_settings import WindowSettings
 from mazegame.menu.menu_manager.menu_manager import MenuManager
 
 from mazegame.utils.gameplay.start_game import Game
+
+log = logging.getLogger(__name__)
 
 
 class MenuWhenLogin:
@@ -14,6 +17,7 @@ class MenuWhenLogin:
     get help, log out, and quit the game.
     """
     def __init__(self) -> None:
+        log.info("Opening menu for logged-in user")
         self.menu_when_login()
 
     @staticmethod

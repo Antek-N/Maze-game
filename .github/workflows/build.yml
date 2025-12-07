@@ -18,7 +18,7 @@ permissions:
 env:
   PYTHON_VERSION: "3.12"
   APP_NAME: "MazeGame"
-  SPEC_PATH: "Maze-Game.spec"
+  SPEC_PATH: "Mazegame.spec"
 
 # Job: build Windows EXE with PyInstaller
 jobs:

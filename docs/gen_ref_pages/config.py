@@ -5,11 +5,10 @@ INCLUDE_PRIVATE = True  # Whether to include private packages (names starting wi
 SOURCE_DIR = Path("src")  # Root source directory to search for packages
 
 # Mapping from source subdirectories > human-readable section titles
-SECTION_TITLE_MAP = {
-}
+SECTION_TITLE_MAP: dict[str, str] = {}
 
 # Explicit ordering for sections when displaying documentation or indexes
-SECTION_ORDER = {}
+SECTION_ORDER: dict[str, int] = {}
 
 # File extensions that should be recognized as linkable images
 LINKABLE_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".ico", ".gif"}

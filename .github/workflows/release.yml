@@ -20,7 +20,7 @@ concurrency:
 env:
   PYTHON_VERSION: "3.12"
   APP_NAME: "MazeGame"
-  SPEC_PATH: "Maze-Game.spec"
+  SPEC_PATH: "Mazegame.spec"
   TAG_NAME: ${{ github.event_name == 'release' && github.event.release.tag_name || github.ref_name }}
 
 jobs:

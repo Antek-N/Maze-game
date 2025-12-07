@@ -1,8 +1,8 @@
 import logging
 import sys
 
-from app import App
-from logging_config import configure_logging
+from mazegame.app import App
+from mazegame.logging_config import configure_logging
 
 log = logging.getLogger(__name__)
 
